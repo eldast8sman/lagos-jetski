@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Admin;
 use App\Repositories\AbstractRepository;
 use App\Repositories\AdminRepository;
 use App\Repositories\Interfaces\AbstractRepositoryInterface;
@@ -16,7 +17,9 @@ class RepositoryServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(AbstractRepositoryInterface::class, AbstractRepository::class);
-        $this->app->bind(AdminRepositoryInterface::class, AdminRepository::class);
+        $this->app->bind(AdminRepositoryInterface::class, function ($app) {
+            return new AdminRepository(new Admin);
+        });
     }
 
     /**

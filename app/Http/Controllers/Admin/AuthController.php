@@ -37,47 +37,29 @@ class AuthController extends Controller
             return $this->failed_response("There is already an Admin", 409);
         }
         $admin = $this->admin->store($request);
+        if(!$admin){
+            return $this->failed_response("Failed to add Admin", 500);
+        }
 
         return $this->success_response("Admin added successfully", $admin);
     }
 
     public function fetch_token($token){
-        $admin = Admin::where('verification_token', $token)->first();
-        if(empty($admin)){
+        if(empty($admin = $this->admin->findFirstBy(['verification_token' => $token]))){
             return $this->failed_response("No Account was fetched", 404);
         }
+
         return $this->success_response("Account fetched successfully", $admin);
     }
 
     public function activate_account(ActivateAccountRequest $request){
-        $admin = Admin::where('verification_token', $request->token)->first();
-        if(empty($admin)){
-            return $this->failed_response("No Account was fetched", 404);
-        }
-        if($admin->activated == 1){
-            return $this->failed_response("Account already activated", 409);
-        }
-        if(strtotime($admin->verification_token_expiry) < time()){
-            return $this->failed_response("Link Expired", 409);
-        }
+        $admin = $this->admin->activate($request);
+        if(!$admin){
+            return $this->failed_response($this->admin->errors, 409);
+        }        
+        $admin->authorization = $this->auth->login($admin);
 
-        $admin->verification_token = null;
-        $admin->verification_token_expiry = null;
-        $admin->password = bcrypt($request->password);
-        $admin->save();
-
-        $token = auth('admin-api')->login($admin);
-        $admin->prev_login = $admin->last_login;
-        $admin->last_login = date('Y-m-d H:i:s');
-        $admin->save();
-
-        $admin->authorization = [
-            'token' => $token,
-            'type' => 'Bearer',
-            'expiry' => env('JWT_TTL') * 60
-        ];
-
-        $this->success_response("Account activated succssfully", $admin);
+        return $this->success_response("Account activated succssfully", $admin);
     }
 
     public function login(LoginRequest $request){

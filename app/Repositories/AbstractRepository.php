@@ -9,7 +9,7 @@ class AbstractRepository implements AbstractRepositoryInterface
 {
     protected $model;
 
-    public function __construct(Model $model)
+    public function __construct($model)
     {
         $this->model = $model;
     }
@@ -74,5 +74,21 @@ class AbstractRepository implements AbstractRepositoryInterface
 
     public function paginate($limit){
         return $this->model->paginate($limit);
+    }
+
+    public function update($id, $data=[]){
+        if(!$model = $this->find($id)){
+            return false;
+        }
+
+        $model->update($data);
+    }
+
+    public function save(Model $model){
+        $model = $model->save();
+    }
+
+    public function delete(Model $model){
+        $model->delete();
     }
 }

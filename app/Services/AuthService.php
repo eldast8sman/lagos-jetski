@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\Admin;
 use Exception;
+use PDO;
 
 class AuthService
 {
@@ -10,12 +12,21 @@ class AuthService
     public function __construct($guard='user-api'){
         $this->guard = $guard;
     }
-    
+
     public function attempt($data) : array|bool
     {
         if(!$token = auth($this->guard)->attempt($data)){
             return false;
         }
+
+        if($this->guard == 'admin-api'){
+            $user = Admin::where('email', $data['email']);
+        } elseif($this->guard == 'user-api') {
+            //
+        }
+        $user->prev_login = $user->last_login;
+        $user->last_login = date('Y-m-d H:i:s');
+        $user->save();
 
         return [
             'token' => $token,
@@ -38,6 +49,15 @@ class AuthService
         if(!$token = auth($this->guard)->login($user)){
             return false;
         }
+
+        if($this->guard == 'admin-api'){
+            $user = Admin::find($user->id);
+        } elseif($this->guard == 'user-api') {
+            //
+        }
+        $user->prev_login = $user->last_login;
+        $user->last_login = date('Y-m-d H:i:s');
+        $user->save();
 
         return [
             'token' => $token,
