@@ -12,6 +12,7 @@ use App\Http\Requests\Admin\ResetPasswordRequest;
 use App\Mail\Admin\AddAdminNotificationMail;
 use App\Mail\Admin\ForgotPasswordMail;
 use App\Models\Admin;
+use App\Repositories\Interfaces\AdminRepositoryInterface;
 use App\Services\AuthService;
 use App\Services\FileManagerService;
 use Exception;
@@ -23,9 +24,11 @@ use Illuminate\Support\Str;
 class AuthController extends Controller
 {
     private $auth;
+    protected $admin;
 
-    public function __construct()
+    public function __construct(AdminRepositoryInterface $admin)
     {
+        $this->admin = $admin;
         $this->auth = new AuthService('admin-api');
     }
 
@@ -33,24 +36,7 @@ class AuthController extends Controller
         if(Admin::count() > 0){
             return $this->failed_response("There is already an Admin", 409);
         }
-        $all = $request->except(['photo']);
-        if(!empty($request->photo)){
-            $photo = FileManagerService::upload_file($request->file('photo'), env('FILESYSTEM_DISK'));
-            if($photo){
-                $all['photo'] = $photo->id;
-            }
-        }
-        $verification_token = Str::random(20).time();
-        $all['verification_token'] = $verification_token;
-        $all['verification_token_expiry'] = date('Y-m-d H:i:s', time() + (60 * 60 * 24));
-        if(!$admin = Admin::create($all)){
-            return $this->failed_response("Admin Creation Failed");
-        }
-
-        if(!empty($admin->email)){
-            $admin->name = $admin->firstname;
-            Mail::to($admin)->send(new AddAdminNotificationMail($admin->name, $verification_token));
-        }
+        $admin = $this->admin->store($request);
 
         return $this->success_response("Admin added successfully", $admin);
     }
