@@ -9,17 +9,12 @@ use App\Http\Requests\Admin\ChangePasswordRequest;
 use App\Http\Requests\Admin\ForgotPasswordRequest;
 use App\Http\Requests\Admin\LoginRequest;
 use App\Http\Requests\Admin\ResetPasswordRequest;
-use App\Mail\Admin\AddAdminNotificationMail;
-use App\Mail\Admin\ForgotPasswordMail;
 use App\Models\Admin;
 use App\Repositories\Interfaces\AdminRepositoryInterface;
 use App\Services\AuthService;
-use App\Services\FileManagerService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -52,14 +47,30 @@ class AuthController extends Controller
         return $this->success_response("Account fetched successfully", $admin);
     }
 
-    public function activate_account(ActivateAccountRequest $request){
-        $admin = $this->admin->activate($request);
-        if(!$admin){
-            return $this->failed_response($this->admin->errors, 409);
-        }        
-        $admin->authorization = $this->auth->login($admin);
+    public function fetch_by_verification_token($token){
+        try {
+            $admin = $this->admin->findByVerificationToken($token);
+            if(empty($admin)){
+                return $this->failed_response("Wrong Link", 404);
+            }
+            return $this->success_response("Admin fetched successfully", $admin);
+        } catch (Exception $e){
+            return $this->failed_response("Server Error");
+        }
+    }
 
-        return $this->success_response("Account activated succssfully", $admin);
+    public function activate_account(ActivateAccountRequest $request){
+        try {
+            $admin = $this->admin->activate($request);
+            if(!$admin){
+                return $this->failed_response($this->admin->errors, 409);
+            }
+            $admin->authorization = $this->auth->login($admin);
+    
+            return $this->success_response("Account activated succssfully", $admin);
+        } catch(Exception $e){
+            return $this->failed_response("Server Error");
+        }
     }
 
     public function login(LoginRequest $request){
@@ -67,14 +78,8 @@ class AuthController extends Controller
         if(!$token = $this->auth->attempt($all)){
             $this->failed_response("Wrong Login Credentials");
         }
-
-        $admin = Admin::where('email', $request->email)->first();
-        $admin->prev_login = $admin->last_login;
-        $admin->last_login = date('Y-m-d H:i:s');
-        $admin->save();
-
+        $admin = $this->admin->findByEmail($request->email);
         $admin->authorization = $token;
-
         return $this->success_response("LogIn successful", $admin);
     }
 
@@ -87,32 +92,18 @@ class AuthController extends Controller
     }
 
     public function forgot_password(ForgotPasswordRequest $request){
-        $admin = Admin::where('email', $request->email)->first();
-        $admin->token = Str::random(20).time();
-        $admin->token_expiry = date('Y-m-d H:i:s', time() + (60 * 10));
-        $admin->save();
-
-        $admin->name = $admin->firstname;
-        Mail::to($admin)->send(new ForgotPasswordMail($admin->name, $admin->token));
-
-        return $this->success_response("Reset Password Link sent to ".$admin->email);
+        if(!$this->admin->forgot_password($request)){
+            return $this->failed_response("Wrong Email", 404);
+        }
+        return $this->success_response("Reset Password Link sent to ".$request->email);
     }
 
     public function reset_password(ResetPasswordRequest $request){
-        $admin = Admin::where('token', $request->token)->first();
-        if(empty($admin)){
-            return $this->failed_response("Wrong Link", 400);
-        }
-        if($admin->token_expiry < date('Y-m-d H:i:s')){
-            return $this->failed_response("Expired Link", 400);
+        if(!$this->admin->reset_password($request)){
+            return $this->failed_response($this->admin->errors, 409);
         }
 
-        $admin->password = bcrypt($request->password);
-        $admin->token = null;
-        $admin->token_expiry = null;
-        $admin->save();
-
-        $this->success_response("Password changed successfully");
+        return $this->success_response("Password changed successfully");
     }
 
     public function change_password(ChangePasswordRequest $request){
@@ -130,6 +121,8 @@ class AuthController extends Controller
     }
 
     public function update_account_details(ChangeAccountDetailsRequest $request){
-        $admin = $this;
+        $admin = $this->admin->update_account_details($request);
+
+        $this->success_response("Account details successfully updated", $admin);
     }
 }

@@ -17,4 +17,8 @@ class AdminBankAccountDetail extends Model
         'account_number',
         'account_name'
     ];
+
+    public function admin(){
+        return $this->belongsTo(Admin::class);
+    }
 }

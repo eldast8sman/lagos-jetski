@@ -39,11 +39,15 @@ class Admin extends Authenticatable implements JWTSubject
         'password'
     ];
 
+    public function photo(){
+        return $this->hasOne(FileManager::class);
+    }
+
     protected function casts(): array
     {
         return [
             'verification_token_expiry' => 'datetime',
-            'token_expiry' => 'dateTime',
+            'token_expiry' => 'datetime',
             'password' => 'hashed',
         ];
     }
@@ -56,5 +60,9 @@ class Admin extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public function account(){
+        return $this->hasOne(AdminBankAccountDetail::class);
     }
 }

@@ -11,7 +11,7 @@ class ChangeAccountDetailsRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class ChangeAccountDetailsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'bank_name' => 'required|string',
+            'account_number' => 'required|string',
+            'account_name' => 'required|string'
         ];
     }
 }

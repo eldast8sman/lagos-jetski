@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Repositories\Interfaces\AbstractRepositoryInterface;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 
 class AbstractRepository implements AbstractRepositoryInterface
@@ -26,50 +27,57 @@ class AbstractRepository implements AbstractRepositoryInterface
     }
 
     public function find(int $id){
-        $data = $this->model->find($id);
-
-        if(empty($data)){
+        try {
+            $data = $this->model->find($id);
+            return $data;
+        } catch(Exception $e){
             return false;
         }
-
-        return $data;
     }
 
     public function findBy(array $criteria, $orderBy=[], $limit=null){
-        if(empty($criteria)){
+        try {
+            if(empty($criteria)){
+                return false;
+            }
+
+            $data = $this->model->where($criteria);
+            if(!empty($orderBy)){
+                foreach($orderBy as $order){
+                    $data = $data->orderBy($order[0], $order[2]);
+                }
+            }
+    
+            if(isset($limit)){
+                $data = $data->paginate($limit);
+            } else {
+                $data = $data->get();
+            }
+    
+            return $data;
+        } catch(Exception $e){
             return false;
         }
-
-        $data = $this->model->where($criteria);
-        if(!empty($orderBy)){
-            foreach($orderBy as $order){
-                $data = $data->orderBy($order[0], $order[2]);
-            }
-        }
-
-        if(isset($limit)){
-            $data = $data->paginate($limit);
-        } else {
-            $data = $data->get();
-        }
-
-        return $data;
     }
 
     public function findFirstBy(array $criteria, $orderBy=[])
     {
-        if(empty($criteria)){
+        try {
+            if(empty($criteria)){
+                return false;
+            }
+            
+            $data = $this->model->where($criteria);
+            if(!empty($orderBy)){
+                foreach($orderBy as $order){
+                    $data = $data->orderBy($order[0], $order[1]);
+                }
+            }
+            
+            return $data->first();
+        } catch(Exception $e){
             return false;
         }
-        
-        $data = $this->model->where($criteria);
-        if(!empty($orderBy)){
-            foreach($orderBy as $order){
-                $data = $data->orderBy($order[0], $order[1]);
-            }
-        }
-        
-        return $data->first();
     }
 
     public function paginate($limit){
@@ -77,11 +85,15 @@ class AbstractRepository implements AbstractRepositoryInterface
     }
 
     public function update($id, $data=[]){
-        if(!$model = $this->find($id)){
+        try {
+            if(!$model = $this->find($id)){
+                return false;
+            }
+    
+            $model->update($data);
+        } catch(Exception $e){
             return false;
         }
-
-        $model->update($data);
     }
 
     public function save(Model $model){

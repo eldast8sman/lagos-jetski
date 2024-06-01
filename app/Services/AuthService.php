@@ -20,7 +20,7 @@ class AuthService
         }
 
         if($this->guard == 'admin-api'){
-            $user = Admin::where('email', $data['email']);
+            $user = Admin::where('email', $data['email'])->first();
         } elseif($this->guard == 'user-api') {
             //
         }
