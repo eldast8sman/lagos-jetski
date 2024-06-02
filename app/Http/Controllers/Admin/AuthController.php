@@ -9,6 +9,7 @@ use App\Http\Requests\Admin\ChangePasswordRequest;
 use App\Http\Requests\Admin\ForgotPasswordRequest;
 use App\Http\Requests\Admin\LoginRequest;
 use App\Http\Requests\Admin\ResetPasswordRequest;
+use App\Http\Requests\Admin\UpdateProfileRequest;
 use App\Models\Admin;
 use App\Repositories\Interfaces\AdminRepositoryInterface;
 use App\Services\AuthService;
@@ -124,5 +125,13 @@ class AuthController extends Controller
         $admin = $this->admin->update_account_details($request);
 
         $this->success_response("Account details successfully updated", $admin);
+    }
+
+    public function update(UpdateProfileRequest $request){
+        if(!$admin = $this->admin->update_profile($request)){
+            return $this->failed_response('Could not update Profile');
+        }
+
+        return $this->success_response('Profile Updated successfully', $admin);
     }
 }

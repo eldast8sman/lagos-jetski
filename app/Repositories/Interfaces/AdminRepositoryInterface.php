@@ -19,4 +19,6 @@ interface AdminRepositoryInterface extends AbstractRepositoryInterface
     public function reset_password(Request $request);
 
     public function update_account_details(Request $request);
+
+    public function update_profile(Request $request);
 }

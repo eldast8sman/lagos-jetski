@@ -22,6 +22,8 @@ class AdminRepository extends AbstractRepository implements AdminRepositoryInter
         parent::__construct($admin);
     }
 
+    private $auth = new AuthService('admin-api');
+
     public function store(Request $request){
         $all = $request->except(['photo']);
         if(!empty($request->photo)){
@@ -148,11 +150,34 @@ class AdminRepository extends AbstractRepository implements AdminRepositoryInter
     public function update_account_details(Request $request)
     {
         $all = $request->all();
-        $auth = new AuthService('admin-api');
-        $admin = $this->find($auth->logged_in_user()->id);
+        $admin = $this->find($this->auth->logged_in_user()->id);
         $account = $admin->account()->first();
         $account->update($all);
 
         return $this->admin($admin);
+    }
+
+    public function update_profile(Request $request)
+    {
+        $admin = $this->auth->logged_in_user();
+        try {
+            $all = $request->except(['photo']);
+            if(!empty($request->photo)){
+                $photo = FileManagerService::upload_file($request->file('photo'), env('FILESYSTEM_DISK'));
+                if($photo){
+                    $all['photo'] = $photo->id;
+                    if(!empty($admin->photo)){
+                        FileManagerService::delete($admin->photo);
+                    }
+                }
+            }
+            if($this->update($admin->id, $request->all())){
+                return false;
+            }
+
+            return $this->admin($admin);
+        } catch(Exception $e){
+            return false;
+        }
     }
 }
