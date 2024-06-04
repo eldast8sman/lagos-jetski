@@ -15,10 +15,10 @@ return new class extends Migration
         Schema::create('admin_bank_account_details', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Admin::class, 'admin_id');
-            $table->string('bank_name');
+            $table->string('bank_name')->nullable();
             $table->string('bank_code')->nullable();
             $table->string('nip_code')->nullable();
-            $table->string('account_number');
+            $table->string('account_number')->nullable();
             $table->string('account_name')->nullable();
             $table->timestamps();
         });

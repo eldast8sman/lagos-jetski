@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class AbstractRepository implements AbstractRepositoryInterface
 {
     protected $model;
+    public $error_msg;
 
     public function __construct($model)
     {
@@ -22,8 +23,16 @@ class AbstractRepository implements AbstractRepositoryInterface
         return $model;
     }
 
-    public function all(){
-        return $this->model->all();
+    public function all($orderBy=[]){
+        if(!empty($orderBy)){
+            $models = $this->model;
+            foreach($orderBy as $order){
+                $models = $models->orderBy($order[0], $order[1]);
+            }
+            return $models->get();
+        } else {
+            return $this->model->all();
+        }
     }
 
     public function find(int $id){
@@ -44,7 +53,7 @@ class AbstractRepository implements AbstractRepositoryInterface
             $data = $this->model->where($criteria);
             if(!empty($orderBy)){
                 foreach($orderBy as $order){
-                    $data = $data->orderBy($order[0], $order[2]);
+                    $data = $data->orderBy($order[0], $order[1]);
                 }
             }
     
@@ -70,7 +79,7 @@ class AbstractRepository implements AbstractRepositoryInterface
             $data = $this->model->where($criteria);
             if(!empty($orderBy)){
                 foreach($orderBy as $order){
-                    $data = $data->orderBy($order[0], $order[1]);
+                    $data = $data ->orderBy($order[0], $order[1]);
                 }
             }
             
@@ -87,11 +96,14 @@ class AbstractRepository implements AbstractRepositoryInterface
     public function update($id, $data=[]){
         try {
             if(!$model = $this->find($id)){
+                $this->error_msg = "Empty Model";
                 return false;
             }
     
             $model->update($data);
+            return $model;
         } catch(Exception $e){
+            $this->error_msg = $e->getMessage();
             return false;
         }
     }

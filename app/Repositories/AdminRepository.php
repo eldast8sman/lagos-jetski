@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Events\AdminRegistered;
+use App\Http\Resources\Admin\AdminResource;
 use App\Mail\Admin\ForgotPasswordMail;
 use App\Models\Admin;
 use App\Repositories\Interfaces\AdminRepositoryInterface;
@@ -18,11 +19,10 @@ use Illuminate\Support\Str;
 class AdminRepository extends AbstractRepository implements AdminRepositoryInterface
 {
     public $errors = "";
+
     public function construct(Admin $admin){
         parent::__construct($admin);
     }
-
-    private $auth = new AuthService('admin-api');
 
     public function store(Request $request){
         $all = $request->except(['photo']);
@@ -147,21 +147,20 @@ class AdminRepository extends AbstractRepository implements AdminRepositoryInter
         return true;
     }
 
-    public function update_account_details(Request $request)
+    public function update_account_details(Admin $admin, Request $request)
     {
         $all = $request->all();
-        $admin = $this->find($this->auth->logged_in_user()->id);
         $account = $admin->account()->first();
         $account->update($all);
 
         return $this->admin($admin);
     }
 
-    public function update_profile(Request $request)
+    public function update_profile(Admin $admin, Request $request)
     {
-        $admin = $this->auth->logged_in_user();
         try {
             $all = $request->except(['photo']);
+            
             if(!empty($request->photo)){
                 $photo = FileManagerService::upload_file($request->file('photo'), env('FILESYSTEM_DISK'));
                 if($photo){
@@ -171,13 +170,75 @@ class AdminRepository extends AbstractRepository implements AdminRepositoryInter
                     }
                 }
             }
-            if($this->update($admin->id, $request->all())){
+            if(!$admin = $this->update($admin->id, $all)){
+                $this->errors = $this->error_msg;
                 return false;
             }
 
             return $this->admin($admin);
         } catch(Exception $e){
+            $this->errors = $e->getMessage();
             return false;
         }
+    }
+
+    public function all_admins()
+    {
+        $data = [
+            ['firstname', 'asc'],
+            ['lastname', 'asc'],
+            ['created_at', 'asc']
+        ];
+        $admins = $this->all($data);
+
+        // foreach($admins as $admin){
+        //     $admin = $this->admin($admin);
+        // }
+
+        return AdminResource::collection($admins);
+    }
+
+    public function fetch_by_uuid($uuid){
+        $admin = $this->findFirstBy(['uuid' => $uuid]);
+        if(empty($admin)){
+            return false;
+        }
+        return new AdminResource($admin);
+    }
+
+    public function update_admin($uuid, Request $request)
+    {
+        $admin = $this->findFirstBy(['uuid' => $uuid]);
+        if(empty($admin)){
+            $this->errors = "Admin not Fetched";
+            return false;
+        }
+
+        if(!empty(Admin::where('uuid', '!=', $uuid)->where(function ($query) use ($request){
+            $query->where('email', $request->email)
+                ->orWhere('phone', $request->phone);
+        })->first())){
+            $this->errors = "Duplicate Email or Duplicate Phone Number";
+            return false;
+        }
+        
+        $updated = $this->update_profile($admin, $request);
+        if(!$updated){
+            return false;
+        }
+
+        return $updated;
+    }
+
+    public function delete_admin(string $uuid)
+    {
+        $admin = $this->findFirstBy(['uuid' => $uuid]);
+        if(empty($admin)){
+            $this->errors = "Admin not Fetched";
+            return false;
+        }
+
+        $this->delete($admin);
+        return true;
     }
 }

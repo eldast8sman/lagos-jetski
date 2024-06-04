@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -12,5 +13,23 @@ Route::prefix('admin')->group(function(){
         Route::post('/forgot-password', 'forgot_password')->name('admin.forgot_password');
         Route::post('/reset-password', 'reset_password')->name('admin.resetPassword');
         Route::post('/login', 'login')->name('admin.login');
+        Route::get('/refresh-token', 'refresh_token')->name('admin.refreshToken');
+    });
+
+    Route::middleware('auth:admin-api')->group(function(){
+        Route::controller(AuthController::class)->group(function(){
+            Route::get('/me', 'me')->name('admin.me');
+            Route::post('/account-details', 'update_account_details')->name('admin.updateAccountDetails');
+            Route::post('/me', 'update')->name('admin.profileUpdate');
+            Route::post('/change-password', 'change_password')->name('admin.passwordChange');
+        });
+
+        Route::controller(AdminController::class)->group(function(){
+            Route::get('/admins', 'index')->name('admin.admins.index');
+            Route::post('/admins', 'store')->name('admin.admins.store');
+            Route::get('/admins/{uuid}', 'show')->name('admin.admins.show');
+            Route::post('/admins/{uuid}', 'update')->name('admin.admin.update');
+            Route::delete('/admins/{uuid}', 'destroy')->name('admin.admin.delete');
+        });
     });
 });

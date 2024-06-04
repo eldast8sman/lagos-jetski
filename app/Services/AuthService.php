@@ -2,13 +2,20 @@
 
 namespace App\Services;
 
+use App\Mail\Admin\ForgotPasswordMail;
 use App\Models\Admin;
 use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use PDO;
 
 class AuthService
 {
     private $guard;
+    public $errors = "";
+
     public function __construct($guard='user-api'){
         $this->guard = $guard;
     }
@@ -81,5 +88,60 @@ class AuthService
         } catch(Exception $e){
             return false;
         }
+    }
+
+    public function forgot_password(Request $request)
+    {
+        if($this->guard == 'admin-api'){
+            $user = Admin::where('email', $request->email)->first();
+        } 
+        if(empty($user)){
+            return false;
+        } 
+        
+        $user->token = Str::random(20).time();
+        $user->token_expiry = date('Y-m-d H:i:s', time() + (60 * 10));
+        $user->save();
+
+        Mail::to($user->email)->send(new ForgotPasswordMail($user->firstname, $user->token));
+        return true;
+    }
+
+    public function reset_password(Request $request) : bool
+    {
+        if($this->guard == 'admin-api'){
+            $user = Admin::where('token', $request->token)->first();
+        }
+        if(empty($user)){
+            $this->errors = "Wrong Link";
+            return false;
+        }
+
+        if($user->token_expiry < date('Y-m-d H:i:s')){
+            $this->errors = "Expired Link";
+            return false;
+        }
+        $user->update([
+            'token' => null,
+            'token_expiry' => null,
+            'password' => Hash::make($request->password)
+        ]);
+
+        return true;
+    }
+    public function change_password(Request $request) : bool
+    {
+        if($this->guard == 'admin-api'){
+            $user = Admin::find($this->logged_in_user()->id);
+        }
+
+        if(!Hash::check($request->old_password, $user->password)){
+            $this->errors = "Incorrect Old Password";
+            return false;
+        }
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return true;
     }
 }

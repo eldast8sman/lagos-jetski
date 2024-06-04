@@ -39,10 +39,6 @@ class Admin extends Authenticatable implements JWTSubject
         'password'
     ];
 
-    public function photo(){
-        return $this->hasOne(FileManager::class);
-    }
-
     protected function casts(): array
     {
         return [

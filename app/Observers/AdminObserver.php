@@ -13,9 +13,7 @@ class AdminObserver
     public function created(Admin $admin): void
     {
         AdminBankAccountDetail::create([
-            'admin_id' => $admin->id,
-            'bank_name' => 'No Bank',
-            'account_number' => 'No Account Number'
+            'admin_id' => $admin->id
         ]);
     }
 

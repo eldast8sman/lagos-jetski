@@ -77,7 +77,7 @@ class AuthController extends Controller
     public function login(LoginRequest $request){
         $all = $request->all();
         if(!$token = $this->auth->attempt($all)){
-            $this->failed_response("Wrong Login Credentials");
+            return $this->failed_response("Wrong Login Credentials");
         }
         $admin = $this->admin->findByEmail($request->email);
         $admin->authorization = $token;
@@ -93,45 +93,43 @@ class AuthController extends Controller
     }
 
     public function forgot_password(ForgotPasswordRequest $request){
-        if(!$this->admin->forgot_password($request)){
+        if(!$this->auth->forgot_password($request)){
             return $this->failed_response("Wrong Email", 404);
         }
         return $this->success_response("Reset Password Link sent to ".$request->email);
     }
 
     public function reset_password(ResetPasswordRequest $request){
-        if(!$this->admin->reset_password($request)){
-            return $this->failed_response($this->admin->errors, 409);
+        if(!$this->auth->reset_password($request)){
+            return $this->failed_response($this->auth->errors, 409);
         }
 
         return $this->success_response("Password changed successfully");
     }
 
     public function change_password(ChangePasswordRequest $request){
-        $user = $this->auth->logged_in_user();
-
-        if(!Hash::check($request->old_password, $user->password)){
-            return $this->failed_response("Wrong Password", 409);
+        if(!$this->auth->change_password($request)){
+            return $this->failed_response("Incorrect Old Password", 409);
         }
 
-        $user = Admin::find($user->id);
-        $user->password = bcrypt($request->password);
-        $user->save();
-
-        $this->success_response("Password successfully changed");
+        return $this->success_response("Password successfully changed");
     }
 
     public function update_account_details(ChangeAccountDetailsRequest $request){
-        $admin = $this->admin->update_account_details($request);
+        $admin = $this->admin->update_account_details($this->auth->logged_in_user(), $request);
 
-        $this->success_response("Account details successfully updated", $admin);
+        return $this->success_response("Account details successfully updated", $admin);
     }
 
     public function update(UpdateProfileRequest $request){
-        if(!$admin = $this->admin->update_profile($request)){
-            return $this->failed_response('Could not update Profile');
+        if(!$admin = $this->admin->update_profile($this->auth->logged_in_user(), $request)){
+            return $this->failed_response($this->admin->errors);
         }
 
         return $this->success_response('Profile Updated successfully', $admin);
+    }
+
+    public function me(){
+        return $this->success_response("Logged in user details fetched successfully", $this->admin->admin($this->auth->logged_in_user()));
     }
 }
