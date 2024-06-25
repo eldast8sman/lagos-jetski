@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AuthController;
+use App\Services\G5PosService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -33,3 +34,5 @@ Route::prefix('admin')->group(function(){
         });
     });
 });
+
+Route::get('/g5-login', [G5PosService::class, 'login']);
