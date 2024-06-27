@@ -7,6 +7,8 @@ use App\Repositories\AbstractRepository;
 use App\Repositories\AdminRepository;
 use App\Repositories\Interfaces\AbstractRepositoryInterface;
 use App\Repositories\Interfaces\AdminRepositoryInterface;
+use App\Repositories\Interfaces\MemberRepositoryInterface;
+use App\Repositories\MemberRepository;
 use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -20,6 +22,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(AdminRepositoryInterface::class, function ($app) {
             return new AdminRepository(new Admin);
         });
+        $this->app->bind(MemberRepositoryInterface::class, MemberRepository::class);
     }
 
     /**

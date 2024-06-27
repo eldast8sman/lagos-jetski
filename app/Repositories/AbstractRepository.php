@@ -89,6 +89,64 @@ class AbstractRepository implements AbstractRepositoryInterface
         }
     }
 
+    public function findByOr(array $criteria, $orderBy=[], $limit=null)
+    {
+        try {
+            if(empty($criteria)){
+                return false;
+            }
+
+            $first = array_shift($criteria);
+            $data = $this->model->where(key($first), reset($key));
+            if(!empty($criteria)){
+                foreach($criteria as $key=>$value){
+                    $data = $data->orWhere($key, $value);
+                }
+            }
+            if(!empty($orderBy)){
+                foreach($orderBy as $order){
+                    $data = $data->orderBy($order[0], $order[1]);
+                }
+            }
+            if(isset($limit)){
+                $data = $data->paginate($limit);
+            } else {
+                $data = $data->get();
+            }
+
+            return $data;
+        } catch(Exception $e){
+            return false;
+        }
+    }
+
+    public function findByOrFirst(array $criteria, $orderBy=[])
+    {
+        try {
+            if(empty($criteria)){
+                return false;
+            }
+
+            $first = array_shift($criteria);
+            $data = $this->model->where(key($first), reset($key));
+            if(!empty($criteria)){
+                foreach($criteria as $key=>$value){
+                    $data = $data->orWhere($key, $value);
+                }
+            }
+            if(!empty($orderBy)){
+                foreach($orderBy as $order){
+                    $data = $data->orderBy($order[0], $order[1]);
+                }
+            }
+            
+            return $data->first();
+            
+        } catch(Exception $e){
+            return false;
+        }
+    }
+
     public function paginate($limit){
         return $this->model->paginate($limit);
     }

@@ -20,7 +20,7 @@ class AdminRepository extends AbstractRepository implements AdminRepositoryInter
 {
     public $errors = "";
 
-    public function construct(Admin $admin){
+    public function __construct(Admin $admin){
         parent::__construct($admin);
     }
 

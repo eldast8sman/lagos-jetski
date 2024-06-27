@@ -21,19 +21,23 @@ class G5PosService
         $this->branch_id = config('g5pos.api_credentials.branch_id');
         $this->workstation_id = config('g5pos.api_credentials.workstation_id');
         $this->password = config('g5pos.api_credentials.password');
+        $this->employee_code = config('g5pos.api_credentials.employee_code');
 
-        $this->token = Cache::remember('g5pos_token', 1200, function () {
-            $result =  $this->login();
-            return $result["token"];
-          });
+        // $this->token = Cache::remember('g5pos_token', 1200, function () {
+        //     $result =  $this->login();
+        //     return $result["token"];
+        // });
     }
 
     public function login(){
         $data = [
-            "BranchID" => $this->branch_id,
-            "WorkstationId" => $this->workstation_id,
-            "Password" => $this->password,
-            "EmployeeCode" => $this->employee_code
+          "EmployeeID" => 0,
+          "BranchID" => 1,
+          "Password" => "8887910",
+          "EmployeeCode" => "999",
+          "POS_Config_ID" => 0,
+          "InvConfigId" => 0,
+          "WorkstationId" => 1
         ];
 
         $response = Http::post(config('g5pos.api_credentials.login_url'), $data);
