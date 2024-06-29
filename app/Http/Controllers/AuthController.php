@@ -6,6 +6,8 @@ use App\Http\Requests\ActivateAccountRequest;
 use App\Http\Requests\ForgotPasswordRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\ResetPasswordRequest;
+use App\Http\Resources\ProfileResource;
+use App\Http\Resources\v1\Users\Account\AccountResource;
 use App\Mail\Admin\ForgotPasswordMail;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use App\Services\AuthService;
@@ -75,5 +77,10 @@ class AuthController extends Controller
         }
 
         return $this->success_response("Password changed successfully");
+    }
+
+    public function me(){
+        $user = $this->user->find($this->auth->logged_in_user()->id);
+        return $this->success_response('Profile fetched successfully', new ProfileResource($user));
     }
 }

@@ -53,6 +53,14 @@ Route::prefix('user')->group(function(){
 
         Route::get('/refresh-token', 'refresh_token')->name('user.refreshToken');
     });
+
+    Route::middleware('auth:user-api')->group(function(){
+        Route::prefix('account')->group(function(){
+            Route::controller(ControllersAuthController::class)->group(function(){
+                Route::get('/', 'me')->name('user.me');
+            });
+        });
+    });
 });
 
 Route::get('/g5-login', [G5PosService::class, 'login']);
