@@ -3,12 +3,14 @@
 namespace App\Repositories;
 
 use App\Events\UserRegistered;
+use App\Models\Product;
 use App\Models\User;
 use App\Models\Wallet;
 use App\Repositories\Interfaces\MemberRepositoryInterface;
 use App\Services\G5PosService;
 use Exception;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class MemberRepository extends AbstractRepository implements MemberRepositoryInterface
@@ -24,7 +26,7 @@ class MemberRepository extends AbstractRepository implements MemberRepositoryInt
         try {
             $service = new G5PosService();
 
-            $customers = $service->getCustomers([]);
+            $customers = json_decode($service->getCustomers([]), true);
 
             foreach($customers as $customer){
                 if(empty($customer['Phone'])){
@@ -37,30 +39,43 @@ class MemberRepository extends AbstractRepository implements MemberRepositoryInt
                     $customer['Mobile'] = null;
                 }
 
-                $user = $this->findByOrFirst(['g5_id' => $customer['CustomerID'], 'email' => $customer['Email']]);
+                $email_array = explode(',', $customer['Email']);
+                $email = trim(strval(array_shift($email_array)));
+                $other_emails = !empty($email_array) ? trim(strval(join(',', $email_array))) : '';
+
+                $sortData = [
+                    ['g5_id' => $customer['CustomerID']],
+                    ['email' => $customer['Email']],
+                    ['phone' => $customer['Mobile']]
+                ];
+
+                $user = $this->findByOrFirst($sortData);
                 if($user){
                     $user->wallet()->update(['balance' => $customer['Debt'] < 0 ? abs($customer['Debt']) : -1 * abs($customer['Debt'])]);
-                    return $user;
+                    continue;
                 }
 
+
+                $balance = $customer['Debt'] < 0 ? abs($customer['Debt']) : -1 * abs($customer['Debt']);
                 $user = $this->store([
                     'firstname' => $customer['CustomerName'],
                     'lastname' => $customer['FamilyName'],
-                    'username' => $customer['FamilyName'] . $customer['CustomerName'],
                     'phone' => $customer['Mobile'] != '' ? $customer['Mobile'] : $customer['Phone'],
-                    'password' => bcrypt($customer['CustomerName'] . $customer['FamilyName']),
                     'gender' => $customer['Sex'],
                     'marital_status' => ($customer['MartialStatus']) ? $customer['MartialStatus'] : 'Single',
                     'address' => $customer['Street'] . ' ' .  $customer['City'] . ' ' . $customer['State'],
                     'photo' => "https://avatars.dicebear.com/api/initials/" . $customer['CustomerName'] . ".svg",
                     'dob' => Carbon::parse($customer['BirthDay'])->format('Y-m-d'),
-                    'email' => $customer['Email']
-                ]);
-
-                return $user;
+                    'email' => $email,
+                    'other_emails' => $other_emails,
+                    'membership_id' => !empty($product = Product::where('name', 'JetSki')->first()) ? $product->id : null
+                ], $balance);
             }
+
+            return true;
         } catch(Exception $e){
-            
+            Log::error($e->getMessage());
+            return false;
         }
     }
 
@@ -86,5 +101,17 @@ class MemberRepository extends AbstractRepository implements MemberRepositoryInt
         UserRegistered::dispatch($user);
 
         return $user;
+    }
+
+    public function all_members($limit=null)
+    {
+        $order = [
+            ['firstname', 'asc'],
+            ['lastname', 'asc'],
+            ['created_at', 'asc']
+        ];
+
+        $users = $this->all($order, $limit);
+        return $users;
     }
 }

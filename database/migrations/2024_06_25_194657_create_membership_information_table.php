@@ -26,7 +26,7 @@ return new class extends Migration
             $table->integer('draft')->nullable();
             $table->integer('nwa')->unique()->nullable();
             $table->date('nwa_expiry')->nullable();
-            $table->integer('mmsi')->unique();
+            $table->integer('mmsi')->unique()->nullable();
             $table->integer('call_sign')->nullable();
             $table->timestamps();
         });

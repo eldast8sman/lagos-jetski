@@ -4,17 +4,22 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Spatie\Sluggable\HasSlug;
+use Spatie\Sluggable\SlugOptions;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
-    use HasFactory;
+    use HasFactory, HasSlug;
 
     protected $fillable = [
         'uuid',
         'firstname',
+        'lastname',
+        'username',
         'phone',
         'email',
+        'other_emails',
         'password',
         'dob',
         'gender',
@@ -37,7 +42,9 @@ class User extends Authenticatable implements JWTSubject
         'relationship',
         'parent_id',
         'notifications',
-        'can_use'
+        'can_use',
+        'last_login',
+        'prev_login'
     ];
 
     protected $hidden = [
@@ -77,5 +84,13 @@ class User extends Authenticatable implements JWTSubject
 
     public function wallet(){
         return $this->hasOne(Wallet::class);
+    }
+
+    public function getSlugOptions(): SlugOptions
+    {
+        return SlugOptions::create()
+            ->generateSlugsFrom(['firstname', 'lastname'])
+            ->saveSlugsTo('username')
+            ->usingSeparator('_');
     }
 }

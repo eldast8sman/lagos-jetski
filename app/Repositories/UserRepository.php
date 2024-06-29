@@ -28,11 +28,11 @@ class UserRepository extends AbstractRepository implements UserRepositoryInterfa
     public function activate(Request $request)
     {
         try {
-            if(empty($user = $this->findFirstBy(['verification_token' => $request->token, 'activated' => 0]))){
+            if(empty($user = $this->findFirstBy(['verification_token' => $request->token, 'email_verified' => 0]))){
                 $this->errors = "Wrong Link";
                 return false;
             }
-            if(strtotime($user->verification_token_expiry < time())){
+            if(strtotime($user->verification_token_expiry) < time()){
                 $this->errors = "Expired Link";
                 return false;
             }

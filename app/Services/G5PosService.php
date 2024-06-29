@@ -23,10 +23,10 @@ class G5PosService
         $this->password = config('g5pos.api_credentials.password');
         $this->employee_code = config('g5pos.api_credentials.employee_code');
 
-        // $this->token = Cache::remember('g5pos_token', 1200, function () {
-        //     $result =  $this->login();
-        //     return $result["token"];
-        // });
+        $this->token = Cache::remember('g5pos_token', 1200, function () {
+            $result =  $this->login();
+            return $result["token"];
+        });
     }
 
     public function login(){
@@ -113,7 +113,7 @@ class G5PosService
     {
       $data['BranchID'] = $this->branch_id;
   
-      $response = Http::withToken($this->token)->get("{$this->base_url}/api/PosOrder/GetCustomers/{$this->branch_id}");
+      $response = Http::withToken($this->token)->get("{$this->base_url}/PosOrder/GetCustomers/{$this->branch_id}");
   
       return $this->response_handler($response);
     }

@@ -23,15 +23,24 @@ class AbstractRepository implements AbstractRepositoryInterface
         return $model;
     }
 
-    public function all($orderBy=[]){
+    public function all($orderBy=[], $limit=null){
         if(!empty($orderBy)){
             $models = $this->model;
             foreach($orderBy as $order){
                 $models = $models->orderBy($order[0], $order[1]);
             }
-            return $models->get();
+
+            if(!empty($limit)){
+                return $models->paginate($limit);
+            } else {
+                return $models->get();
+            }
         } else {
-            return $this->model->all();
+            if(!empty($limit)){
+                return $this->model->paginate($limit);
+            } else {
+                return $this->model->all();
+            }
         }
     }
 
@@ -128,10 +137,11 @@ class AbstractRepository implements AbstractRepositoryInterface
             }
 
             $first = array_shift($criteria);
-            $data = $this->model->where(key($first), reset($key));
+     
+            $data = $this->model->where(key($first), reset($first));
             if(!empty($criteria)){
-                foreach($criteria as $key=>$value){
-                    $data = $data->orWhere($key, $value);
+                foreach($criteria as $criterion){
+                    $data = $data->orWhere(key($criterion), reset($criterion));
                 }
             }
             if(!empty($orderBy)){

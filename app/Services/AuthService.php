@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Mail\Admin\ForgotPasswordMail;
 use App\Models\Admin;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -29,7 +30,7 @@ class AuthService
         if($this->guard == 'admin-api'){
             $user = Admin::where('email', $data['email'])->first();
         } elseif($this->guard == 'user-api') {
-            //
+            $user = User::where('email', $data['email'])->first();
         }
         $user->prev_login = $user->last_login;
         $user->last_login = date('Y-m-d H:i:s');
@@ -60,7 +61,7 @@ class AuthService
         if($this->guard == 'admin-api'){
             $user = Admin::find($user->id);
         } elseif($this->guard == 'user-api') {
-            //
+            $user = User::find($user->id);
         }
         $user->prev_login = $user->last_login;
         $user->last_login = date('Y-m-d H:i:s');
@@ -94,7 +95,9 @@ class AuthService
     {
         if($this->guard == 'admin-api'){
             $user = Admin::where('email', $request->email)->first();
-        } 
+        } elseif($this->guard == 'user-api'){
+            $user = User::where('email', $request->email)->first();
+        }
         if(empty($user)){
             return false;
         } 
@@ -111,6 +114,8 @@ class AuthService
     {
         if($this->guard == 'admin-api'){
             $user = Admin::where('token', $request->token)->first();
+        } elseif($this->guard == 'user-api'){
+            $user = User::where('token', $request->token)->first();
         }
         if(empty($user)){
             $this->errors = "Wrong Link";
@@ -133,6 +138,8 @@ class AuthService
     {
         if($this->guard == 'admin-api'){
             $user = Admin::find($this->logged_in_user()->id);
+        } elseif($this->guard == 'user-api'){
+            $user = User::find($this->logged_in_user()->id);
         }
 
         if(!Hash::check($request->old_password, $user->password)){
