@@ -19,6 +19,14 @@ class FileManagerService
         return $file;
     }
 
+    public static function findByUrl($url){
+        $file = FileManager::where('url', $url)->first();
+        if(empty($file)){
+            return false;
+        }
+        return $file;
+    }
+
     public static function upload_file(UploadedFile $file, $disk='public')
     {
         $extension = strtolower($file->getClientOriginalExtension());

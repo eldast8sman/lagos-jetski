@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ActivateAccountRequest;
 use App\Http\Requests\ForgotPasswordRequest;
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\ProfilePhotoRequest;
+use App\Http\Requests\ProfileUpdateRequest;
 use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Resources\ProfileResource;
 use App\Http\Resources\v1\Users\Account\AccountResource;
@@ -82,5 +84,24 @@ class AuthController extends Controller
     public function me(){
         $user = $this->user->find($this->auth->logged_in_user()->id);
         return $this->success_response('Profile fetched successfully', new ProfileResource($user));
+    }
+
+    public function change_profile_photo(ProfilePhotoRequest $request){
+        if(!$user = $this->user->update_photo($request)){
+            return $this->failed_response("Photo Upload Failed");
+        }
+
+        return $this->success_response('Profile Photo Updated successfully', new ProfileResource($user));
+    }
+
+    public function update(ProfileUpdateRequest $request){
+        if(($request->gender != 'Male') and ($request->gender != 'Female')){
+            return $this->failed_response('Wrong Gender', 422);
+        }
+        if(!$user = $this->user->update($this->auth->logged_in_user()->id, $request->all())){
+            return $this->failed_response($this->user->error_msg);
+        }
+
+        return $this->success_response("Profile Update successful", new ProfileResource($user));
     }
 }

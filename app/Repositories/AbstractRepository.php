@@ -18,6 +18,7 @@ class AbstractRepository implements AbstractRepositoryInterface
 
     public function create($data){
         if(!$model = $this->model->create($data)){
+            $this->error_msg = "Creation Failed";
             return false;
         }
         return $model;

@@ -11,4 +11,6 @@ interface UserRepositoryInterface extends AbstractRepositoryInterface
     public function activate(Request $request);
 
     public function findByEmail(string $email);
+
+    public function update_photo(Request $request);
 }

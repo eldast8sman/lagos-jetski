@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\User;
 use App\Repositories\Interfaces\UserRepositoryInterface;
+use App\Services\FileManagerService;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -58,4 +59,26 @@ class UserRepository extends AbstractRepository implements UserRepositoryInterfa
         }
         return $user;
     }
+
+    public function update_photo(Request $request)
+    {
+        $photo = FileManagerService::upload_file($request->file('photo'), env('FILESYSTEM_DISK'));
+        if(!$photo){
+            return false;
+        }
+
+        $user = $this->find(auth('user-api')->user()->id);
+        $old_photo = $user->photo;
+        $user->photo = $photo->url;
+        $this->save($user);
+        if(!empty($old_photo)){
+            $old_photo = FileManagerService::findByUrl($old_photo);
+            if($old_photo){
+                FileManagerService::delete($old_photo->id);
+            }
+        }
+
+        return $user;
+    }
+
 }

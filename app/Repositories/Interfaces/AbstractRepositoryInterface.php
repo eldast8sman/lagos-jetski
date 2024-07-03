@@ -11,4 +11,6 @@ interface AbstractRepositoryInterface
     public function findBy(array $array);
 
     public function findFirstBy(array $array);
+
+    public function update($id, $data=[]);
 }

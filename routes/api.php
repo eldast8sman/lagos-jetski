@@ -4,6 +4,8 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\MembershipController;
 use App\Http\Controllers\AuthController as ControllersAuthController;
+use App\Http\Controllers\MembershipController as ControllersMembershipController;
+use App\Http\Controllers\RelativeController;
 use App\Services\G5PosService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -58,6 +60,22 @@ Route::prefix('user')->group(function(){
         Route::prefix('account')->group(function(){
             Route::controller(ControllersAuthController::class)->group(function(){
                 Route::get('/', 'me')->name('user.me');
+                Route::post('/profile-photo', 'change_profile_photo')->name('user.profilePhoto.change');
+                Route::put('/', 'update')->name('user.updateProfile');
+            });
+
+            Route::controller(RelativeController::class)->prefix('relatives')->group(function(){
+                Route::post('/', 'store')->name('user.relative.store');
+                Route::get('/', 'index')->name('user.relative.index');
+                Route::get('/{id}', 'show')->name('user.relative.show');
+                Route::post('/{id}', 'update')->name('user.relative.update');
+                Route::delete('/{id}', 'destroy')->name('user.relative.delete');
+            });
+
+            Route::controller(ControllersMembershipController::class)->prefix('membership')->group(function(){
+                Route::get('/types', 'types')->name('user.membershipTypes');
+                Route::get('/', 'index')->name('user.membershipInformation');
+                Route::put('/', 'update')->name('user.membershipInformation.update');
             });
         });
     });
