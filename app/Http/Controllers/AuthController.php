@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ActivateAccountRequest;
+use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\ForgotPasswordRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\ProfilePhotoRequest;
@@ -103,5 +104,12 @@ class AuthController extends Controller
         }
 
         return $this->success_response("Profile Update successful", new ProfileResource($user));
+    }
+
+    public function change_password(ChangePasswordRequest $request){
+        if(!$this->auth->change_password($request)){
+            return $this->failed_response($this->auth->errors, 409);
+        }
+        return $this->success_response("Password successfully changed");
     }
 }

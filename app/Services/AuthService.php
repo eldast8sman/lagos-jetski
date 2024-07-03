@@ -134,6 +134,7 @@ class AuthService
 
         return true;
     }
+    
     public function change_password(Request $request) : bool
     {
         if($this->guard == 'admin-api'){

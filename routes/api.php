@@ -62,6 +62,7 @@ Route::prefix('user')->group(function(){
                 Route::get('/', 'me')->name('user.me');
                 Route::post('/profile-photo', 'change_profile_photo')->name('user.profilePhoto.change');
                 Route::put('/', 'update')->name('user.updateProfile');
+                Route::put('/update-password', 'change_password')->name('user.changePassword');
             });
 
             Route::controller(RelativeController::class)->prefix('relatives')->group(function(){
