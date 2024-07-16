@@ -105,7 +105,7 @@ class G5PosService
   
     public function getMenu(array $data) //Done
     {
-      $response = Http::withToken($this->token)->get("{$this->base_url}/api/PosOrder/GetScreenItems/{$this->branch_id}/{$data['ScreenID']}/{$data['Type']}");
+      $response = Http::withToken($this->token)->get("{$this->base_url}/PosOrder/GetScreenItems/{$this->branch_id}/{$data['ScreenID']}/{$data['Type']}");
       return $this->response_handler($response);
     }
   

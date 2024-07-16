@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\MembershipController;
+use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\AuthController as ControllersAuthController;
 use App\Http\Controllers\MembershipController as ControllersMembershipController;
 use App\Http\Controllers\RelativeController;
@@ -39,6 +40,15 @@ Route::prefix('admin')->group(function(){
 
         Route::controller(MembershipController::class)->prefix('members')->group(function(){
             Route::get('/', 'index')->name('admin.members.index');
+        });
+
+        Route::prefix('orders')->group(function(){
+            Route::controller(MenuController::class)->prefix('menu')->group(function(){
+                Route::get('/', 'index')->name('admin.menu.index');
+                Route::get('/{id}', 'show')->name('admin.menu.show');
+                Route::get('/search', 'search')->name('admin.menu.search');
+                Route::get('/{id}/modifiers', 'modifiers')->name('admin.menu.modifiers');
+            });
         });
     });
 });
@@ -84,3 +94,4 @@ Route::prefix('user')->group(function(){
 
 Route::get('/g5-login', [G5PosService::class, 'login']);
 Route::get('/g5-members', [MembershipController::class, 'store_g5_members']);
+Route::get('/g5-menu', [MenuController::class, 'store_g5_menu']);

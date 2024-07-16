@@ -19,6 +19,7 @@ class Product extends Model
         'g5_id',
         'screen_id',
         'parent_id',
+        'group_id',
         'modifier_id',
         'photo'
     ];
