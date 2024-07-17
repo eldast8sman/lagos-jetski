@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Schedule;
 Schedule::call(function(){
     $repo = new MemberRepository(new User());
     $repo->fetch_g5_customers();
-})->everyMinute();
+})->twiceDaily();
 
 Schedule::call(function(){
     $repo = new MenuRepository(new Product());

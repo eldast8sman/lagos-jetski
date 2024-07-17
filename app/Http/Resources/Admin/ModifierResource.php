@@ -24,7 +24,7 @@ class ModifierResource extends JsonResource
               'available' => $this->Available,
               // 'screen_id' => $this->WSScreenItemID,
               // 'type_id' => $this->ItemTypeID,
-              'photo' => $this->photo,
+              'photo' => $this->Picture,
               // 'parent_id' => $this->ParentID,
               'modifier_id' => $this->Modifier1,
               'group_id' => $this->GroupID

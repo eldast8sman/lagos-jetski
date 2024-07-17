@@ -53,7 +53,7 @@ class G5PosService
       $data['AgentID'] = 0;
       $data['DeliveryStatus'] = 0;
   
-      $response = Http::withToken($this->token)->post("{$this->base_url}/api/PosOrder/NewDeliveryOrder", $data);
+      $response = Http::withToken($this->token)->post("{$this->base_url}/PosOrder/NewDeliveryOrder", $data);
       
       return json_decode($this->response_handler($response), true);
     }
@@ -63,7 +63,7 @@ class G5PosService
       $data['BranchID'] = $this->branch_id;
       $data['LineNo'] = 0;
   
-      $response = Http::withToken($this->token)->post("{$this->base_url}/api/PosOrder/Tips", $data);
+      $response = Http::withToken($this->token)->post("{$this->base_url}/PosOrder/Tips", $data);
   
       return $this->response_handler($response);
     }
@@ -74,7 +74,7 @@ class G5PosService
       $data['Workstation'] = $this->workstation_id;
   
   
-      $response = Http::withToken($this->token)->post("{$this->base_url}/api/PosOrder/SaveOrder", $data);
+      $response = Http::withToken($this->token)->post("{$this->base_url}/PosOrder/SaveOrder", $data);
       return $this->response_handler($response);
     }
   
@@ -84,7 +84,7 @@ class G5PosService
       $data['FromDate'] = "2000-01-01";
       $data['ToDate'] = date('Y-m-d');
   
-      $response = Http::withToken($this->token)->get("{$this->base_url}/api/PosOrder/GetOrderListbyCustIdDate/{$this->branch_id}/{$data['CustomerID']}/2000-01-01/{$data['ToDate']}");
+      $response = Http::withToken($this->token)->get("{$this->base_url}/PosOrder/GetOrderListbyCustIdDate/{$this->branch_id}/{$data['CustomerID']}/2000-01-01/{$data['ToDate']}");
       return $this->response_handler($response);
     }
   
@@ -92,13 +92,13 @@ class G5PosService
     {
       $data['BranchID'] = $this->branch_id;
   
-      $response = Http::withToken($this->token)->get("{$this->base_url}/api/PosOrder/GetOrderItemsList/{$this->branch_id}/{$data['OrderID']}");
+      $response = Http::withToken($this->token)->get("{$this->base_url}/PosOrder/GetOrderItemsList/{$this->branch_id}/{$data['OrderID']}");
       return $this->response_handler($response);
     }
   
     public function getModifiers(array $data) //Done
     {
-      $response = Http::withToken($this->token)->get("{$this->base_url}/api/PosOrder/GetModifierList/{$data['ModifierID']}", $data);
+      $response = Http::withToken($this->token)->get("{$this->base_url}/PosOrder/GetModifierList/{$data['ModifierID']}", $data);
   
       return $this->response_handler($response);
     }
@@ -122,7 +122,7 @@ class G5PosService
     {
       $response = Http::withToken($this->token)->withHeaders(
         ['Content-Type' => 'application/json']
-      )->get("{$this->base_url}/api/PosOrder/GetDeliveryOrderNo/{$this->branch_id}");
+      )->get("{$this->base_url}/PosOrder/GetDeliveryOrderNo/{$this->branch_id}");
   
       return json_decode($this->response_handler($response), true);
     }
