@@ -28,7 +28,9 @@ class MemberRepository extends AbstractRepository implements MemberRepositoryInt
 
             $customers = json_decode($service->getCustomers([]), true);
 
-            foreach($customers as $customer){
+            // foreach($customers as $customer){
+            for($i=0; $i<=9; $i++){
+                $customer = $customers[$i];
                 if(empty($customer['Phone'])){
                     $customer['Phone'] = null;
                 }

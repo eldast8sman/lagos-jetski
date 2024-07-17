@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\MembershipController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\AuthController as ControllersAuthController;
 use App\Http\Controllers\MembershipController as ControllersMembershipController;
+use App\Http\Controllers\MenuController as ControllersMenuController;
 use App\Http\Controllers\RelativeController;
 use App\Services\G5PosService;
 use Illuminate\Http\Request;
@@ -87,6 +88,13 @@ Route::prefix('user')->group(function(){
                 Route::get('/types', 'types')->name('user.membershipTypes');
                 Route::get('/', 'index')->name('user.membershipInformation');
                 Route::put('/', 'update')->name('user.membershipInformation.update');
+            });
+        });
+
+        Route::prefix('orders')->group(function(){
+            Route::controller(ControllersMenuController::class)->prefix('menu')->group(function(){
+                Route::get('/{id}', 'index')->name('user.menu.index');
+                Route::get('/{id}/modifiers', 'modifiers')->name('user.menu.modifier');
             });
         });
     });
