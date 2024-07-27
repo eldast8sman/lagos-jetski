@@ -9,6 +9,10 @@ cat /tmp/env.json | jq -r 'to_entries[] | "\(.key)=\(.value)"' > /var/app/curren
 # Navigate to the Laravel app directory
 cd /var/app/current
 
+#Make Storage writable
+sudo chown -R webapp:webapp storage bootstrap/cache
+sudo chmod -R 775 storage bootstrap/cache
+
 # Run Laravel Artisan commands
 php artisan migrate
 php artisan config:clear
