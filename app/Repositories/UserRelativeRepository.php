@@ -21,7 +21,7 @@ class UserRelativeRepository extends AbstractRepository implements UserRelativeR
 
     private function check(){
         if(!empty(auth('user-api')->user()->parent_id)){
-            $this->errors = "s a relative, you do not have access to this feature";
+            $this->errors = "As a relative, you do not have access to this feature";
             return false;
         }
 

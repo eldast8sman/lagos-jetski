@@ -4,7 +4,9 @@ namespace App\Services;
 
 use App\Mail\Admin\ForgotPasswordMail;
 use App\Models\Admin;
+use App\Models\Order;
 use App\Models\User;
+use App\Repositories\OrderRepository;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -66,6 +68,11 @@ class AuthService
         $user->prev_login = $user->last_login;
         $user->last_login = date('Y-m-d H:i:s');
         $user->save();
+
+        if(($user->next_order_sync <= date('Y-m-d H:i:s') or ($user->next_order_sync == null))){
+            $order = new OrderRepository(new Order());
+            $order->fetch_g5_order($user->id);
+        }
 
         return [
             'token' => $token,

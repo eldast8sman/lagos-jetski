@@ -2,9 +2,14 @@
 
 namespace App\Services;
 
+use App\Mail\CreditNotificationMail;
+use App\Models\SparkleWebhook;
+use App\Models\User;
+use App\Models\WalletTransaction;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 
 class SparkleService
 {
@@ -65,5 +70,43 @@ class SparkleService
         }
 
         return $response->json();
+    }
+
+    public function webhook($data, G5PosService $g5){
+        $webhook = SparkleWebhook::create([
+            'data' => json_encode($data),
+        ]);
+        if(!array_key_exists('customer_id', $data)){
+            return false;
+        }
+        if(empty($user = User::where('sparkle_id', $data['customer_id'])->first())){
+            return false;
+        }
+
+        $webhook->user_id = $user->id;
+        $webhook->user_name = $user->firstname.' '.$user->lastname;
+        $webhook->amount = $data['amount'];
+        $webhook->save();
+
+        $wallet = $user->wallet()->first;
+
+        if(empty($trans = WalletTransaction::where('exyernal_reference', $data['external_reference'])->first())){
+            $trans = WalletTransaction::create([
+                'wallet_id' => $wallet->id,
+                'amount' => $data['amount'],
+                'type' => 'Credit',
+                'is_user_credited' => false,
+                'payment_processor' => 'SPARKLE'
+            ]);
+        }
+        $wallet->balance += $data['amount'];
+        $wallet->save();
+        $response = $g5->payByCustomer($trans, $user->g5_id);
+        $trans->update(['is_user_credited' => true]);
+        $webhook->g5_response = $response;
+        $webhook->save();
+
+        $user->name = $user->firstname;
+        Mail::to($user)->send(new CreditNotificationMail($user->name, $user->account_number, $data['amount'], $wallet->balance));
     }
 }

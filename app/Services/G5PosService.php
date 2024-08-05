@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Http\Controllers\Controller;
+use App\Models\WalletTransaction;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
@@ -145,5 +146,17 @@ class G5PosService
         return $result;
     }
 
-    // public function
+    public function payByCustomer(WalletTransaction $trans, int $user_id)
+    {
+      $data = [
+        'BranchID' => $this->branch_id,
+        'CustomerID' => $user_id,
+        'Amount' => $trans->amount,
+        'PayDate' => $trans->created_at,
+        'PayTypeId' => 28
+      ];
+
+      $response = Http::withToken($this->token)->post("{$this->base_url}/PosOrder/PayByCustomer", $data);
+      return $this->response_handler($response);
+    }
 }
