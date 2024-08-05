@@ -26,7 +26,7 @@ class ProfileResource extends JsonResource
             'marital_status' => ucfirst($this->marital_status),
             'address' => $this->address,
             'photo' => $this->photo,
-            'membership' => $this->membership()->first()->name
+            'membership' => $this->membership()->first()->name ?? NULL
         ];
     }
 }

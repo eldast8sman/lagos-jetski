@@ -38,6 +38,7 @@ class User extends Authenticatable implements JWTSubject
         'external_sparkle_reference',
         'account_number',
         'last_synced',
+        'next_order_sync',
         'notification_token',
         'relationship',
         'parent_id',

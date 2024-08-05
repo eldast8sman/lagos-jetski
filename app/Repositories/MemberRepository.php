@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Events\UserRegistered;
+use App\Mail\AddUserNotificationMail;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Wallet;
@@ -11,6 +12,7 @@ use App\Services\G5PosService;
 use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class MemberRepository extends AbstractRepository implements MemberRepositoryInterface
@@ -115,5 +117,21 @@ class MemberRepository extends AbstractRepository implements MemberRepositoryInt
 
         $users = $this->all($order, $limit);
         return $users;
+    }
+
+    public function resend_activation_link(User $user)
+    {
+        if($user->email_verified == 1){
+            $this->errors = "Email already verified";
+            return false;
+        }
+
+        $user->verification_token = Str::random(20).time();
+        $user->verification_token_expiry = date('Y-m-d H:i:s', time() + (60 * 60 * 24));
+        $user->save();
+        $user->name = $user->firstname;
+        Mail::to($user)->send(new AddUserNotificationMail($user->name, $user->verification_token));
+
+        return true;
     }
 }

@@ -2,11 +2,14 @@
 
 namespace App\Repositories;
 
+use App\Mail\AddUserNotificationMail;
 use App\Models\User;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use App\Services\FileManagerService;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class UserRepository extends AbstractRepository implements UserRepositoryInterface
 {
@@ -34,7 +37,12 @@ class UserRepository extends AbstractRepository implements UserRepositoryInterfa
                 return false;
             }
             if(strtotime($user->verification_token_expiry) < time()){
-                $this->errors = "Expired Link";
+                $user->verification_token = Str::random(20).time();
+                $user->verification_token_expiry = date('Y-m-d H:i:s', time() + (60 * 60 * 24));
+                $user->save();
+                $user->name = $user->firstname;
+                Mail::to($user)->send(new AddUserNotificationMail($user->name, $user->verification_token));
+                $this->errors = "Expired Link and an updated Link sent to ".$user->email;
                 return false;
             }
 

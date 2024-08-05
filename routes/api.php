@@ -4,9 +4,11 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\MembershipController;
 use App\Http\Controllers\Admin\MenuController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\AuthController as ControllersAuthController;
 use App\Http\Controllers\MembershipController as ControllersMembershipController;
 use App\Http\Controllers\MenuController as ControllersMenuController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\RelativeController;
 use App\Services\G5PosService;
 use Illuminate\Http\Request;
@@ -41,6 +43,7 @@ Route::prefix('admin')->group(function(){
 
         Route::controller(MembershipController::class)->prefix('members')->group(function(){
             Route::get('/', 'index')->name('admin.members.index');
+            Route::get('/verification/resend', 'resend_activation_link')->name('admin.members.verificationLinkResend');
         });
 
         Route::prefix('orders')->group(function(){
@@ -49,6 +52,12 @@ Route::prefix('admin')->group(function(){
                 Route::get('/{id}', 'show')->name('admin.menu.show');
                 Route::get('/search', 'search')->name('admin.menu.search');
                 Route::get('/{id}/modifiers', 'modifiers')->name('admin.menu.modifiers');
+            });
+            Route::controller(AdminOrderController::class)->group(function(){
+                Route::get('/', 'index')->name('admin.orders.index');
+                Route::get('/past', 'past_orders')->name('admin.orders.past');
+                Route::get('/search', 'search')->name('admin.orders.search');
+                Route::post('/', 'store')->name('admin.orders.store');
             });
         });
     });
@@ -95,6 +104,11 @@ Route::prefix('user')->group(function(){
             Route::controller(ControllersMenuController::class)->prefix('menu')->group(function(){
                 Route::get('/{id}', 'index')->name('user.menu.index');
                 Route::get('/{id}/modifiers', 'modifiers')->name('user.menu.modifier');
+            });
+            Route::controller(OrderController::class)->group(function(){
+                Route::get('/', 'index')->name('user.order.index');
+                Route::get('/past', 'past_orders')->name('user.order.past');
+                Route::post('/', 'store')->name('user.order.store');
             });
         });
     });
