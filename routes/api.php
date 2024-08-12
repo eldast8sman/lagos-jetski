@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\MembershipController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\AuthController as ControllersAuthController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\MembershipController as ControllersMembershipController;
 use App\Http\Controllers\MenuController as ControllersMenuController;
 use App\Http\Controllers\OrderController;
@@ -110,6 +111,15 @@ Route::prefix('user')->group(function(){
                 Route::get('/past', 'past_orders')->name('user.order.past');
                 Route::post('/', 'store')->name('user.order.store');
             });
+        });
+
+        Route::prefix('bookings')->controller(BookingController::class)->group(function(){
+            Route::get('/', 'index')->name('user.booking.index');
+            Route::get('/past', 'pastBookings')->name('user.booking.past');
+            Route::get('/{uuid}', 'show')->name('user.booking.show');
+            Route::post('/', 'store')->name('user.booking.store');
+            Route::post('/{uuid}', 'update')->name('user.booking.update');
+            Route::delete('/{uuid}', 'destroy')->name('user.booking,delete');
         });
     });
 });

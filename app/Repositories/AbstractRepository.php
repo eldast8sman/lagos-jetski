@@ -107,7 +107,7 @@ class AbstractRepository implements AbstractRepositoryInterface
             }
 
             $first = array_shift($criteria);
-            $data = $this->model->where(key($first), reset($key));
+            $data = $this->model->where(key($first), reset($first));
             if(!empty($criteria)){
                 foreach($criteria as $key=>$value){
                     $data = $data->orWhere($key, $value);
