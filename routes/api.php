@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\BookingController as AdminBookingController;
 use App\Http\Controllers\Admin\MembershipController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
@@ -60,6 +61,11 @@ Route::prefix('admin')->group(function(){
                 Route::get('/search', 'search')->name('admin.orders.search');
                 Route::post('/', 'store')->name('admin.orders.store');
             });
+        });
+
+        Route::prefix('bookings')->controller(AdminBookingController::class)->group(function(){
+            Route::get('/', 'index')->name('admin.booking.index');
+            Route::get('/past', 'pastBookings')->name('admin.booking.past');
         });
     });
 });

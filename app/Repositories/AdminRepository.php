@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Events\AdminRegistered;
 use App\Http\Resources\Admin\AdminResource;
+use App\Mail\Admin\AddAdminNotificationMail;
 use App\Mail\Admin\ForgotPasswordMail;
 use App\Models\Admin;
 use App\Repositories\Interfaces\AdminRepositoryInterface;
@@ -67,7 +68,11 @@ class AdminRepository extends AbstractRepository implements AdminRepositoryInter
                 return false;
             }
             if(strtotime($admin->verification_token_expiry) < time()){
-                $this->errors = "Expired Link";
+                $admin->verification_token = Str::random(20).time();
+                $admin->verification_token_expiry = date('Y-m-d H:i:s', time() + (60 * 60 * 24));
+                $admin->name = $admin->firstname;
+                Mail::to($admin)->send(new AddAdminNotificationMail($admin->name, $admin->verification_token));
+                $this->errors = "Expired Link and an updated Link sent to ".$admin->email;
                 return false;
             }
     

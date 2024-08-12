@@ -53,9 +53,34 @@ class BookingRepository extends AbstractRepository implements BookingRepositoryI
         return $bookings;
     }
 
+    public function adminIndex($limit=4)
+    {
+        $data = [
+            ['date', '>=', Carbon::now()]
+        ];
+        $orderBy = [
+            ['date', 'desc']
+        ];
+
+        $bookings = $this->findBy($data, $orderBy, $limit);
+        return $bookings;
+    }
+
     public function pastBookings($limit=10){
         $data = [
             ['user_id', auth()->user()->id],
+            ['date', '<=', Carbon::now()]
+        ];
+        $orderBy = [
+            ['date', 'desc']
+        ];
+        $bookings = $this->findBy($data, $orderBy, $limit);
+        return $bookings;
+    }
+
+    public function allPastBookings($limit = 10)
+    {
+        $data = [
             ['date', '<=', Carbon::now()]
         ];
         $orderBy = [
@@ -112,30 +137,5 @@ class BookingRepository extends AbstractRepository implements BookingRepositoryI
         }
 
         return true;
-    }
-
-    public function storeInvite(Request $request, string $booking_id)
-    {
-        if(empty($booking = $this->findFirstBy(['uuid' => $booking_id]))){
-            $this->errors = "Wrong Link";
-            return false;
-        }
-        if($booking->created_guests >= $booking->guest_amount){
-            $this->errors = "Invite Limit reached";
-            return false;
-        }
-
-        $all = $request->all();
-        $all['booking_id'] = $booking->id;
-        if(Invite::where('email', $all['email'])->where('booking_id', $all['booking_id'])){
-            $this->errors = "You have already accepted the invite to this Event before";
-            return false;
-        }
-
-        $invite = Invite::create($all);
-        $booking->created_guests += 1;
-        $this->save($booking);
-
-        return $invite;
     }
 }
