@@ -12,6 +12,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class SaveOrderJob implements ShouldQueue
 {
@@ -46,6 +47,7 @@ class SaveOrderJob implements ShouldQueue
 
             $newOrder = $repo->create([
                 'user_id' => $this->user_id,
+                'uuid' => Str::uuid().'-'.time(),
                 'amount' => $order['TotalPrice'],
                 'description' => $order['Description'],
                 'paid_from' => 'Wallet',
@@ -65,6 +67,7 @@ class SaveOrderJob implements ShouldQueue
         foreach($details as $detail){
             if(empty(OrderItem::where('g5_id', $detail['OrderDetailID'])->first())){
                 OrderItem::create([
+                    'uuid' => Str::uuid().'-'.time(),
                     'order_id' => $newOrder->id,
                     'quantity' => $detail['Quantity'],
                     'amount' => $detail['Quantity'] * $detail['UsedPrice'],

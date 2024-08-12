@@ -13,6 +13,7 @@ use App\Services\G5PosService;
 use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class OrderRepository extends AbstractRepository implements OrderRepositoryInterface
 {
@@ -118,6 +119,7 @@ class OrderRepository extends AbstractRepository implements OrderRepositoryInter
         $data['g5_id'] = $orderId;
         $data['g5_order_number'] = $orderNumber;
         $data['date_ordered']  = Carbon::now();
+        $data['uuid'] = Str::uuid().'-'.time();
         $order = $this->create($data);
 
         $details = $service->getOrderDetails(['OrderID' => $order->g5_id]);
@@ -126,6 +128,7 @@ class OrderRepository extends AbstractRepository implements OrderRepositoryInter
 
         foreach(json_decode($details, true) as $detail){
             OrderItem::create([
+                'uuid' => Str::uuid().'-'.time(),
                 'order_id' => $order->id,
                 'quantity' => $detail['Quantity'],
                 'amount' => $detail['Quantity'] * $detail['UsedPrice'],

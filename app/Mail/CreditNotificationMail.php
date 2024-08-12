@@ -26,7 +26,7 @@ class CreditNotificationMail extends Mailable
         $this->name = $name;
         $this->account_number = $account_number;
         $this->amount = $amount;
-        $this->balance = $balance
+        $this->balance = $balance;
     }
 
     /**

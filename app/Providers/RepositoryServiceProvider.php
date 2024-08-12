@@ -5,14 +5,18 @@ namespace App\Providers;
 use App\Models\Admin;
 use App\Repositories\AbstractRepository;
 use App\Repositories\AdminRepository;
+use App\Repositories\BookingRepository;
 use App\Repositories\Interfaces\AbstractRepositoryInterface;
 use App\Repositories\Interfaces\AdminRepositoryInterface;
+use App\Repositories\Interfaces\BookingRepositoryInterface;
+use App\Repositories\Interfaces\InviteRepositoryInterface;
 use App\Repositories\Interfaces\MemberRepositoryInterface;
 use App\Repositories\Interfaces\MenuRepositoryInterface;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
 use App\Repositories\Interfaces\UserMembershipRepositoryInterface;
 use App\Repositories\Interfaces\UserRelativeRepositoryInterface;
 use App\Repositories\Interfaces\UserRepositoryInterface;
+use App\Repositories\InviteRepository;
 use App\Repositories\MemberRepository;
 use App\Repositories\MenuRepository;
 use App\Repositories\OrderRepository;
@@ -38,6 +42,8 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(UserMembershipRepositoryInterface::class, UserMembershipRepository::class);
         $this->app->bind(MenuRepositoryInterface::class, MenuRepository::class);
         $this->app->bind(OrderRepositoryInterface::class, OrderRepository::class);
+        $this->app->bind(BookingRepositoryInterface::class, BookingRepository::class);
+        $this->app->bind(InviteRepositoryInterface::class, InviteRepository::class);
     }
 
     /**
