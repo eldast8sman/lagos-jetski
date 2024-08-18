@@ -34,6 +34,7 @@ class BookingRepository extends AbstractRepository implements BookingRepositoryI
         $all['link'] = env('APP_URL').'/booking-invite/'.urlencode($uuid);
         if(!$booking = $this->create($all)){
             $this->errors = "Booking creation failed";
+            return false;
         }
 
         return $booking;
