@@ -3,18 +3,22 @@
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\BookingController as AdminBookingController;
+use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\MembershipController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\AuthController as ControllersAuthController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\EventController as ControllersEventController;
 use App\Http\Controllers\MembershipController as ControllersMembershipController;
 use App\Http\Controllers\MenuController as ControllersMenuController;
+use App\Http\Controllers\NotificationImageController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\RelativeController;
 use App\Services\G5PosService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 
 Route::prefix('admin')->group(function(){
     Route::controller(AuthController::class)->group(function(){
@@ -26,6 +30,8 @@ Route::prefix('admin')->group(function(){
         Route::post('/login', 'login')->name('admin.login');
         Route::get('/refresh-token', 'refresh_token')->name('admin.refreshToken');
     });
+
+    Route::get('/notification-images', [NotificationImageController::class, 'index'])->name('notification-images');
 
     Route::middleware('auth:admin-api')->group(function(){
         Route::controller(AuthController::class)->group(function(){
@@ -66,6 +72,14 @@ Route::prefix('admin')->group(function(){
         Route::prefix('bookings')->controller(AdminBookingController::class)->group(function(){
             Route::get('/', 'index')->name('admin.booking.index');
             Route::get('/past', 'pastBookings')->name('admin.booking.past');
+        });
+
+        Route::prefix('events')->controller(EventController::class)->group(function(){
+            Route::post('/', 'store')->name('admin.event.store');
+            Route::get('/', 'index')->name('admin.event.index');
+            Route::get('/past', 'past_events')->name('/admin.events.past');
+            Route::post('/{uuid}', 'update')->name('admin.event.update');
+            Route::delete('/{uuid}', 'destroy')->name('admin.event.delete');
         });
     });
 });
@@ -126,6 +140,11 @@ Route::prefix('user')->group(function(){
             Route::post('/', 'store')->name('user.booking.store');
             Route::post('/{uuid}', 'update')->name('user.booking.update');
             Route::delete('/{uuid}', 'destroy')->name('user.booking,delete');
+        });
+
+        Route::prefix('events')->controller(ControllersEventController::class)->group(function(){
+            Route::get('/', 'index')->name('user.event.index');
+            Route::get('/past', 'pastEvents')->name('user.event.past');
         });
     });
 });
