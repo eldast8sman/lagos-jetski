@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\BookingController as AdminBookingController;
 use App\Http\Controllers\Admin\EventController;
@@ -80,6 +81,12 @@ Route::prefix('admin')->group(function(){
             Route::get('/past', 'past_events')->name('/admin.events.past');
             Route::post('/{uuid}', 'update')->name('admin.event.update');
             Route::delete('/{uuid}', 'destroy')->name('admin.event.delete');
+        });
+
+        Route::prefix('announcements')->controller(AnnouncementController::class)->group(function(){
+            Route::post('/', 'store')->name('admin.anouncement.store');
+            Route::get('/', 'index')->name('admin.announcement.index');
+            Route::get('/{uuid}', 'show')->name('admin.announcement.show');
         });
     });
 });

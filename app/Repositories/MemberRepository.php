@@ -30,8 +30,8 @@ class MemberRepository extends AbstractRepository implements MemberRepositoryInt
 
             $customers = json_decode($service->getCustomers([]), true);
 
-            // foreach($customers as $customer){
-            for($i=0; $i<=9; $i++){
+            foreach($customers as $customer){
+            // for($i=0; $i<=9; $i++){
                 $customer = $customers[$i];
                 if(empty($customer['Phone'])){
                     $customer['Phone'] = null;
@@ -59,21 +59,22 @@ class MemberRepository extends AbstractRepository implements MemberRepositoryInt
                     continue;
                 }
 
-
-                $balance = $customer['Debt'] < 0 ? abs($customer['Debt']) : -1 * abs($customer['Debt']);
-                $user = $this->store([
-                    'firstname' => $customer['CustomerName'],
-                    'lastname' => $customer['FamilyName'],
-                    'phone' => $customer['Mobile'] != '' ? $customer['Mobile'] : $customer['Phone'],
-                    'gender' => ucfirst($customer['Sex']),
-                    'marital_status' => ($customer['MartialStatus']) ? ucfirst($customer['MartialStatus']) : 'Single',
-                    'address' => $customer['Street'] . ' ' .  $customer['City'] . ' ' . $customer['State'],
-                    'photo' => "https://avatars.dicebear.com/api/initials/" . $customer['CustomerName'] . ".svg",
-                    'dob' => Carbon::parse($customer['BirthDay'])->format('Y-m-d'),
-                    'email' => $email,
-                    'other_emails' => $other_emails,
-                    'membership_id' => !empty($product = Product::where('name', 'JetSki')->first()) ? $product->id : null
-                ], $balance);
+                if($customer['Email'] == "uzomad@mac.com"){
+                    $balance = $customer['Debt'] < 0 ? abs($customer['Debt']) : -1 * abs($customer['Debt']);
+                    $user = $this->store([
+                        'firstname' => $customer['CustomerName'],
+                        'lastname' => $customer['FamilyName'],
+                        'phone' => $customer['Mobile'] != '' ? $customer['Mobile'] : $customer['Phone'],
+                        'gender' => ucfirst($customer['Sex']),
+                        'marital_status' => ($customer['MartialStatus']) ? ucfirst($customer['MartialStatus']) : 'Single',
+                        'address' => $customer['Street'] . ' ' .  $customer['City'] . ' ' . $customer['State'],
+                        'photo' => "https://avatars.dicebear.com/api/initials/" . $customer['CustomerName'] . ".svg",
+                        'dob' => Carbon::parse($customer['BirthDay'])->format('Y-m-d'),
+                        'email' => $email,
+                        'other_emails' => $other_emails,
+                        'membership_id' => !empty($product = Product::where('name', 'JetSki')->first()) ? $product->id : null
+                    ], $balance);
+                }
             }
 
             return true;
