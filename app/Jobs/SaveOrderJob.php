@@ -61,7 +61,7 @@ class SaveOrderJob implements ShouldQueue
         }
 
         $g5 = new G5PosService();
-        $details = $g5->getOrderDetails(['OrderId' => $newOrder->g5_id]);
+        $details = $g5->getOrderDetails(['OrderID' => $newOrder->g5_id]);
         $detais = json_decode($details, true);
         
         foreach($details as $detail){
