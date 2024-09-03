@@ -38,6 +38,11 @@ class AuthService
         $user->last_login = date('Y-m-d H:i:s');
         $user->save();
 
+        if(($user->next_order_sync <= date('Y-m-d H:i:s') or ($user->next_order_sync == null))){
+            $order = new OrderRepository(new Order());
+            $order->fetch_g5_order($user->id);
+        }
+
         return [
             'token' => $token,
             'type' => 'Bearer',
