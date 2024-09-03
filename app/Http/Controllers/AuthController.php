@@ -51,7 +51,7 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request){
         if(!$token = $this->auth->attempt($request->all())){
-            return $this->failed_response("Wrong Login Credentials");
+            return $this->failed_response("Wrong Login Credentials", 400);
         }
         $user = $this->user->findByEmail($request->email);
         $user->authorization = $token;
