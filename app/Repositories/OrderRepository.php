@@ -73,14 +73,14 @@ class OrderRepository extends AbstractRepository implements OrderRepositoryInter
 
     public function make_order(array $data){
         $service = new G5PosService();
-        $employee_code = config('g5pos.api_credentials.employee_code', 267);
+        $employee_code = config('g5pos.api_credentials.order_employee_code');
         $getNumber = $service->getOrderNumber();
         $orderNumber = intval($getNumber[0]['OrderNumber']);
 
         $orderData = [
             'OrderNumber' => $orderNumber,
             'OrderMenuID' => 2,
-            'UserID' => $employee_code,
+            'UserID' => intval($employee_code),
             'CustomerID' => $data['g5_id']
         ];
 
@@ -96,7 +96,7 @@ class OrderRepository extends AbstractRepository implements OrderRepositoryInter
                 "AffectedItem" => 0,
                 "VoidReasonID" => 0,
                 "Status" => "selected",
-                "OrderbyEmployeeId" => $employee_code, //intval(env("G5POS_EMPLOYEE_CODE")),
+                "OrderbyEmployeeId" => intval($employee_code), //intval(env("G5POS_EMPLOYEE_CODE")),
                 "PriceModeID" => 1,
                 "OrderingTime" => date('Y-m-d'),
                 "ItemDescription" => $item['name'],
@@ -111,6 +111,7 @@ class OrderRepository extends AbstractRepository implements OrderRepositoryInter
             'selectedItems' => $selectedItems
         ];
         $response = $service->saveOrder($saveData);
+
         if(!filter_var($response, FILTER_VALIDATE_BOOLEAN)){
             $this->errors = "Order can't be processed";
             return false;
@@ -180,6 +181,7 @@ class OrderRepository extends AbstractRepository implements OrderRepositoryInter
             'wallet_id' => $wallet->id,
             'amount' => $amount + ($data['tip_amount'] ?? 0),
             'type' => 'Debit',
+            'uuid' => Str::uuid().'-'.time(),
             'is_user_credited' => false,
             'payment_processor' => "G5 POS",
             'external_reference' => $order->g5_id

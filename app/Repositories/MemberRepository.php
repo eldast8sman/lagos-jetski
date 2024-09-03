@@ -59,6 +59,7 @@ class MemberRepository extends AbstractRepository implements MemberRepositoryInt
 
                 $balance = $customer['Debt'] < 0 ? abs($customer['Debt']) : -1 * abs($customer['Debt']);
                 $user = $this->store([
+                    'g5_id' => $customer['CustomerID'],
                     'firstname' => $customer['CustomerName'],
                     'lastname' => $customer['FamilyName'],
                     'phone' => $customer['Mobile'] != '' ? $customer['Mobile'] : $customer['Phone'],
