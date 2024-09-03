@@ -52,7 +52,7 @@ Route::prefix('admin')->group(function(){
 
         Route::controller(MembershipController::class)->prefix('members')->group(function(){
             Route::get('/', 'index')->name('admin.members.index');
-            Route::get('/verification/resend', 'resend_activation_link')->name('admin.members.verificationLinkResend');
+            Route::get('/{user}/verification-resend', 'resend_activation_link')->name('admin.members.verificationLinkResend');
         });
 
         Route::prefix('orders')->group(function(){
