@@ -85,7 +85,7 @@ class MemberRepository extends AbstractRepository implements MemberRepositoryInt
     public function store(array $data, $balance=null)
     {
         $data['uuid'] = Str::uuid().'-'.time();
-        $data['verification_token'] = Str::random(20).time();
+        $data['verification_token'] = mt_rand(111111, 999999);
         $data['verification_token_expiry'] = date('Y-m-d H:i:s', time() + (60 * 60 * 24));
 
         $user = $this->create($data);
@@ -125,11 +125,11 @@ class MemberRepository extends AbstractRepository implements MemberRepositoryInt
             return false;
         }
 
-        $user->verification_token = Str::random(20).time();
+        $user->verification_token = mt_rand(111111, 666666);
         $user->verification_token_expiry = date('Y-m-d H:i:s', time() + (60 * 60 * 24));
         $user->save();
         $user->name = $user->firstname;
-        Mail::to($user)->send(new AddUserNotificationMail($user->name, $user->verification_token));
+        Mail::to($user)->send(new AddUserNotificationMail($user->name, $user->verification_token, $user->email));
 
         return true;
     }

@@ -14,15 +14,17 @@ class AddUserNotificationMail extends Mailable
     use Queueable, SerializesModels;
 
     public $name;
-    public $link;
+    public $token;
+    public $email;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($name, $token)
+    public function __construct($name, $token, $email)
     {
         $this->name = $name;
-        $this->link = env('FRONT_END_URL').'/activate/'.$token;
+        $this->token = $token;
+        $this->email = $email;
     }
 
     /**

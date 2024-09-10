@@ -23,13 +23,20 @@
                         Hello {{ $name }}
                     </p>
                     <p>
-                        You have just been added as a member on the Lagos Jetski Application. <br /> Click on the link below to activate your Account</td>
+                        You have just been added as a member on the Lagos Jetski Application. <br /> Please proceed to download the Mobile App on your device and follow the below steps
                     </p>
+                    <ul>
+                      <li>Click on the Signup Button</li>
+                      <li>Provide this as Email: <strong>{{ $email }}</strong></li>
+                      <li>Provide this as Pin: <strong>{{ $token }}</strong></li>
+                      <li>Click on the <strong>Continue</strong> button and provide your Password</li>
+                    </ul>
+                  </td>
                 </tr>
                 <tr>
                   <td height="26" style="height:26px;" class="em_h20">&nbsp;</td>
                 </tr>
-                <tr>
+                {{-- <tr>
                   <td align="center" valign="top">
                     <table width="250" style="width:250px; background-color:#6bafb2; border-radius:4px;" border="0" cellspacing="0" cellpadding="0" align="center">
                       <tr>
@@ -37,7 +44,7 @@
                       </tr>
                     </table>
                   </td>
-                </tr>
+                </tr> --}}
                 <tr>
                   <td height="25" style="height:25px;" class="em_h20">&nbsp;</td>
                 </tr>

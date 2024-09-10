@@ -13,7 +13,7 @@ class NotificationService
 
     public function __construct()
     {
-        $this->firebase = (new Factory)->withServiceAccount(Storage::disk('public')->get(''))
+        $this->firebase = (new Factory)->withServiceAccount(Storage::disk('public')->get('/fcm/jetski.json'))
                             ->createMessaging();
     }
 
