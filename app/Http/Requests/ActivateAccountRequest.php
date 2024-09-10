@@ -22,6 +22,7 @@ class ActivateAccountRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'email' => 'required|string|email|exists:users,email',
             'token' => 'required|string|exists:users,verification_token',
             'password' => 'required|string|min:8|confirmed'
         ];

@@ -27,7 +27,7 @@ class SendUserActivationMail implements ShouldQueue
         $user = $event->user;
         if(!empty($user->email) and ($user->email == "uzomad@mac.com")){
             $user->name = $user->firstname;
-            Mail::to($user)->send(new AddUserNotificationMail($user->name, $user->verification_token));
+            Mail::to($user)->send(new AddUserNotificationMail($user->name, $user->verification_token, $user->email));
         }
     }
 }

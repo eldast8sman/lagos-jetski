@@ -112,4 +112,11 @@ class AuthController extends Controller
         }
         return $this->success_response("Password successfully changed");
     }
+
+    public function resend_otp(Request $request){
+        if(!$user = $this->user->resend_activation_link($request)){
+            return $this->failed_response($this->user->errors, 400);
+        }
+        return $this->success_response("OTP has been resent to ".$user->email);
+    }
 }
