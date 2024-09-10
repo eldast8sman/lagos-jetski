@@ -102,6 +102,8 @@ Route::prefix('user')->group(function(){
         Route::post('/login', 'login')->name('user.login');
 
         Route::get('/refresh-token', 'refresh_token')->name('user.refreshToken');
+
+        Route::post('resend-otp', 'resend_otp')->name('user.OPTResend');
     });
 
     Route::middleware('auth:user-api')->group(function(){
