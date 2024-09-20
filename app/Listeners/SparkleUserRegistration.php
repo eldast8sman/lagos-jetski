@@ -28,36 +28,36 @@ class SparkleUserRegistration implements ShouldQueue
     {
         $user = User::find($event->user->id);
         if(!empty($user->parent_id)){
-            try {
-                $service = new SparkleService();
+            // try {
+            //     $service = new SparkleService();
     
-                $reference = "SPK_Jetski_".$user->uuid;
-                $customerPayload = [
-                    "name" => "{$user->firstname} {$user->lastname}",
-                    "external_reference" =>  $reference,
-                    "email" => $user->email,
-                    "bank_verification_number" => "12345678",
-                    "metadata" => []
-                  ];
+            //     $reference = "SPK_Jetski_".$user->uuid;
+            //     $customerPayload = [
+            //         "name" => "{$user->firstname} {$user->lastname}",
+            //         "external_reference" =>  $reference,
+            //         "email" => $user->email,
+            //         "bank_verification_number" => "12345678",
+            //         "metadata" => []
+            //       ];
     
-                $customer = $service->createCustomer($customerPayload);
-                if($customer){
-                    $user->update(['external_sparkle_reference' => $customer['data']['id']]);
+            //     $customer = $service->createCustomer($customerPayload);
+            //     if($customer){
+            //         $user->update(['external_sparkle_reference' => $customer['data']['id']]);
     
-                    $accountPayload = [
-                        "customer_id" => $customer["data"]["id"],
-                        "external_reference" => $reference,
-                        "is_permanent" => 1
-                    ];
+            //         $accountPayload = [
+            //             "customer_id" => $customer["data"]["id"],
+            //             "external_reference" => $reference,
+            //             "is_permanent" => 1
+            //         ];
     
-                    $account = $service->createAccount($accountPayload);
-                    if($account){
-                        $user->update(['account_number' => $account['data']['accounts'][0]['account_number']]);
-                    }
-                }
-            } catch (Exception $e){
-                Log::error($e->getMessage());
-            }
+            //         $account = $service->createAccount($accountPayload);
+            //         if($account){
+            //             $user->update(['account_number' => $account['data']['accounts'][0]['account_number']]);
+            //         }
+            //     }
+            // } catch (Exception $e){
+            //     Log::error($e->getMessage());
+            // }
         }
     }
 }

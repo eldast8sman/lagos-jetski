@@ -21,22 +21,23 @@ class SparkleService
         $this->base_url = config('sparkle.api_credentials.base_url');
         $this->token = Cache::remember('sparkle_token', 1200, function(){
             $result = $this->login();
-            return $result['data']['token'];
+            return $result['data']['access_token'];
         });
     }
 
     public function login(){
-        $url = $this->base_url."/auth";
+        $url = config('sparkle.api_credentials.base_url')."/auth";
         $data = [
             'email' => config('sparkle.api_credentials.email'),
             'password' => config('sparkle.api_credentials.password')
         ];
-        $response = Http::post($url, $data);
+        $response = Http::withBasicAuth(config('sparkle.api_credentials.client_key'), config('sparkle.api_credentials.secret_key'))->post($url, $data);
         return $this->responseHandler($response);
+
     }
 
     public function createCustomer(array $data){
-        $url = $this->base_url."customer/create";
+        $url = $this->base_url."/customer/create";
         $response = Http::withToken($this->token)->post($url, $data);
 
         return $this->responseHandler($response);

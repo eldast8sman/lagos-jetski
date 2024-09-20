@@ -18,4 +18,8 @@ class WalletTransaction extends Model
         'external_reference',
         'payment_processor'
     ];
+
+    public function wallet(){
+        return $this->belongsTo(Wallet::class);
+    }
 }
