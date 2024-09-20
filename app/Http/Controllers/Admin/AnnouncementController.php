@@ -26,7 +26,7 @@ class AnnouncementController extends Controller
         }
 
         $image = NotificationImage::find($ann->notification_image_id);
-        $users = User::whereNotNull('notification_token')->where('notification', true)->get(['notification_token']);
+        $users = User::whereNotNull('notification_token')->where('notifications', true)->get(['notification_token']);
         if(!empty($users)){
             foreach($users as $user){
                 SendNotificationJob::dispatch($user->token, $ann->type, $ann->information, $image->photo);

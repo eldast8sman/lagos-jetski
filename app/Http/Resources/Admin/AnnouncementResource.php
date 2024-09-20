@@ -22,7 +22,7 @@ class AnnouncementResource extends JsonResource
             'notification_type' => $this->notification_type,
             'notification_image_id' => $this->notification_image_id,
             'notification_image_url' => $this->notification_image->photo,
-            'photo' => $this->photo->url
+            'photo' => $this->photo()->first()->url
         ];
     }
 }
