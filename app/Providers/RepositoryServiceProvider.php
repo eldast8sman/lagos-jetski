@@ -20,6 +20,7 @@ use App\Repositories\Interfaces\OrderRepositoryInterface;
 use App\Repositories\Interfaces\UserMembershipRepositoryInterface;
 use App\Repositories\Interfaces\UserRelativeRepositoryInterface;
 use App\Repositories\Interfaces\UserRepositoryInterface;
+use App\Repositories\Interfaces\WalletRepositoryInterface;
 use App\Repositories\InviteRepository;
 use App\Repositories\MemberRepository;
 use App\Repositories\MenuRepository;
@@ -27,6 +28,7 @@ use App\Repositories\OrderRepository;
 use App\Repositories\UserMembershipRepository;
 use App\Repositories\UserRelativeRepository;
 use App\Repositories\UserRepository;
+use App\Repositories\WalletRepository;
 use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -50,6 +52,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(InviteRepositoryInterface::class, InviteRepository::class);
         $this->app->bind(EventRepositoryInterface::class, EventRepository::class);
         $this->app->bind(AnnouncementRepositoryInterface::class, AnnouncementRepository::class);
+        $this->app->bind(WalletRepositoryInterface::class, WalletRepository::class);
     }
 
     /**

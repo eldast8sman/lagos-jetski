@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\AuthController as ControllersAuthController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventController as ControllersEventController;
 use App\Http\Controllers\MembershipController as ControllersMembershipController;
 use App\Http\Controllers\MenuController as ControllersMenuController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\NotificationImageController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\RelativeController;
 use App\Services\G5PosService;
+use App\Services\SparkleService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -155,9 +157,12 @@ Route::prefix('user')->group(function(){
             Route::get('/', 'index')->name('user.event.index');
             Route::get('/past', 'pastEvents')->name('user.event.past');
         });
+
+        Route::get('/', [DashboardController::class, 'index'])->name('userDashboard');
     });
 });
 
 Route::get('/g5-login', [G5PosService::class, 'login']);
 Route::get('/g5-members', [MembershipController::class, 'store_g5_members']);
 Route::get('/g5-menu', [MenuController::class, 'store_g5_menu']);
+Route::get('/sparkle/login', [SparkleService::class, 'login']);

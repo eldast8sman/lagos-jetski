@@ -40,7 +40,7 @@ class AnnouncementRepository extends AbstractRepository implements AnnouncementR
     public function index($limit=10)
     {
         $orderBy = [
-            ['created_at' => 'desc']
+            ['created_at', 'desc']
         ];
         $announcements = $this->all($orderBy, $limit);
 
