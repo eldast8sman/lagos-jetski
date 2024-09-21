@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Jobs\BulkOrderJob;
 use App\Mail\Admin\ForgotPasswordMail;
 use App\Models\Admin;
 use App\Models\Order;
@@ -39,8 +40,7 @@ class AuthService
         $user->save();
 
         if(($user->next_order_sync <= date('Y-m-d H:i:s') or ($user->next_order_sync == null))){
-            $order = new OrderRepository(new Order());
-            $order->fetch_g5_order($user->id);
+            BulkOrderJob::dispatch($user->id);
         }
 
         return [
@@ -75,8 +75,7 @@ class AuthService
         $user->save();
 
         if(($user->next_order_sync <= date('Y-m-d H:i:s') or ($user->next_order_sync == null))){
-            $order = new OrderRepository(new Order());
-            $order->fetch_g5_order($user->id);
+            BulkOrderJob::dispatch($user->id);
         }
 
         return [
