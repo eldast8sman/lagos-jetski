@@ -81,8 +81,6 @@ class G5PosService
     public function getOrders(array $data) //Done
     {
       $data['BranchID'] = $this->branch_id;
-      $data['FromDate'] = "2024-04-01";
-      $data['ToDate'] = date('Y-m-d');
   
       $response = Http::withToken($this->token)->get("{$this->base_url}/PosOrder/GetOrderListbyCustIdDate/{$this->branch_id}/{$data['CustomerID']}/2000-01-01/{$data['ToDate']}");
       return $this->response_handler($response);
