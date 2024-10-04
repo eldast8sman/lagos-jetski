@@ -22,4 +22,8 @@ class WalletTransaction extends Model
     public function wallet(){
         return $this->belongsTo(Wallet::class);
     }
+
+    public function order(){
+        return $this->belongsTo(Order::class, 'external_reference', 'g5_id');
+    }
 }

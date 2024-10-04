@@ -24,4 +24,19 @@ class WalletRepository extends AbstractRepository implements WalletRepositoryInt
         $transactions = $wallet->transactions()->orderBy('id', 'desc')->paginate($limit);
         return $transactions;
     }
+
+    public function userTransaction(string $uuid, int $user_id)
+    {
+        $wallet = $this->findFirstBy([
+            'user_id' => $user_id
+        ]);
+
+        $transaction = $wallet->transactions()->where('uuid', $uuid)->first();
+        if(empty($transaction)){
+            $this->errors = "No Transaction fetched";
+            return false;
+        }
+        
+        return $transaction;
+    }
 }

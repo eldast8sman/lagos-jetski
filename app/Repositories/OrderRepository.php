@@ -31,16 +31,24 @@ class OrderRepository extends AbstractRepository implements OrderRepositoryInter
                 return;
             }
 
+            $from_date = !empty($user->last_synced) ? date('Y-m-d', strtotime($user->last_synced)) : '2000-01-01';
+
             $g5_id = $user->g5_id;
             $g5 = new G5PosService();
 
-            $orders = $g5->getOrders(['CustomerID' => $g5_id]);
+            $orders = $g5->getOrders([
+                'CustomerID' => $g5_id,
+                'FromDate' => $from_date,
+                'ToDate' => date('Y-m-d')
+            ]);
             $orders = json_decode($orders, true);
 
             foreach($orders as $order){
                 SaveOrderJob::dispatch($order, $user->id);
             }
+            $user->last_synced = date('Y-m-d H:i:s');
             $user->next_order_sync = date('Y-m-d H:i:s', time() + (60 * 60 * 6));
+            $user->save();
         } catch (Exception $e){
             Log::error($e->getMessage());
             return false; 

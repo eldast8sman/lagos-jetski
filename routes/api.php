@@ -16,6 +16,7 @@ use App\Http\Controllers\MembershipController as ControllersMembershipController
 use App\Http\Controllers\MenuController as ControllersMenuController;
 use App\Http\Controllers\NotificationImageController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\RelativeController;
 use App\Services\G5PosService;
 use App\Services\SparkleService;
@@ -158,6 +159,11 @@ Route::prefix('user')->group(function(){
             Route::get('/past', 'pastEvents')->name('user.event.past');
         });
 
+        Route::prefix('payments')->controller(PaymentController::class)->group(function(){
+            Route::get('/', 'index')->name('user.payments.index');
+            Route::get('/{uuid}', 'show')->name('user.payment.show');
+        });
+
         Route::get('/', [DashboardController::class, 'index'])->name('userDashboard');
     });
 });
@@ -166,3 +172,5 @@ Route::get('/g5-login', [G5PosService::class, 'login']);
 Route::get('/g5-members', [MembershipController::class, 'store_g5_members']);
 Route::get('/g5-menu', [MenuController::class, 'store_g5_menu']);
 Route::get('/sparkle/login', [SparkleService::class, 'login']);
+Route::get('/user-g5-orders/{user_id}', [ControllersAuthController::class, 'get_user_g5_orders']);
+Route::get('/store-test-user', [MembershipController::class, 'add_test_user']);

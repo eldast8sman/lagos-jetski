@@ -12,8 +12,10 @@ use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Resources\ProfileResource;
 use App\Http\Resources\v1\Users\Account\AccountResource;
 use App\Mail\Admin\ForgotPasswordMail;
+use App\Models\User;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use App\Services\AuthService;
+use App\Services\G5PosService;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -118,5 +120,13 @@ class AuthController extends Controller
             return $this->failed_response($this->user->errors, 400);
         }
         return $this->success_response("OTP has been resent to ".$user->email);
+    }
+
+    public function get_user_g5_orders($user_id){
+        $user = User::find($user_id);
+        $g5 = new G5PosService();
+
+        $orders = $g5->getOrders(['CustomerID' => $user->g5_id]);
+        return $this->success_response("Orders fetched", json_decode($orders, true));
     }
 }

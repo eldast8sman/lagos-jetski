@@ -8,7 +8,7 @@ interface MemberRepositoryInterface extends AbstractRepositoryInterface
 {
     public function fetch_g5_customers();
 
-    public function store(array $data);
+    public function store(array $data, $balance=null);
 
     public function all_members($limit=null);
 

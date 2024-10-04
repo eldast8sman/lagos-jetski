@@ -27,7 +27,7 @@ class OrderResource extends JsonResource
             'date_ordered' => $this->date_ordered,
             'served_by' => $this->served_by,
             'created_at' => $this->created_at,
-            'order_item' => $this->order_item->count() > 0 ? OrderItemResource::collection($this->order_item) : null
+            'order_items' => $this->order_item->count() > 0 ? OrderItemResource::collection($this->order_item) : null
         ];
     }
 }

@@ -39,8 +39,10 @@ class AuthService
         $user->last_login = date('Y-m-d H:i:s');
         $user->save();
 
-        if(($user->next_order_sync <= date('Y-m-d H:i:s') or ($user->next_order_sync == null))){
-            BulkOrderJob::dispatch($user->id);
+        if($this->guard == 'user-api'){
+            if(($user->next_order_sync <= date('Y-m-d H:i:s') or ($user->next_order_sync == null))){
+                BulkOrderJob::dispatch($user->id);
+            }
         }
 
         return [
@@ -74,9 +76,12 @@ class AuthService
         $user->last_login = date('Y-m-d H:i:s');
         $user->save();
 
-        if(($user->next_order_sync <= date('Y-m-d H:i:s') or ($user->next_order_sync == null))){
-            BulkOrderJob::dispatch($user->id);
+        if($this->guard == 'user-api'){
+            if(($user->next_order_sync <= date('Y-m-d H:i:s') or ($user->next_order_sync == null))){
+                BulkOrderJob::dispatch($user->id);
+            }
         }
+        
 
         return [
             'token' => $token,

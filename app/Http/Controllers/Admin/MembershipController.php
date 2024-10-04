@@ -38,4 +38,11 @@ class MembershipController extends Controller
         }
         return $this->success_response("Email verification Link successfully sent");
     }
+
+    public function add_test_user(){
+        $data = $this->test_data();
+        $store = $this->user->store($data, 0);
+
+        return $this->success_response("User added", $store);
+    }
 }
