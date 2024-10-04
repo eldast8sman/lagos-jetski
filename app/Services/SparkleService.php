@@ -9,6 +9,7 @@ use App\Models\WalletTransaction;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class SparkleService
@@ -44,7 +45,7 @@ class SparkleService
     }
 
     public function createAccount(array $data){
-        $url = $this->base_url."/customer/add-account";
+        $url = $this->base_url."/account/create-account";
         
         $response = Http::withToken($this->token)->post($url, $data);
         return $this->responseHandler($response);
@@ -67,7 +68,8 @@ class SparkleService
 
     public function responseHandler(Response $response){
         if ($response->failed()) {
-        return $response->throw()->json();
+            Log::error($response->throw()->json());
+            return false;
         }
 
         return $response->json();

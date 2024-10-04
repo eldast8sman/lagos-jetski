@@ -173,3 +173,4 @@ Route::get('/g5-members', [MembershipController::class, 'store_g5_members']);
 Route::get('/g5-menu', [MenuController::class, 'store_g5_menu']);
 Route::get('/sparkle/login', [SparkleService::class, 'login']);
 Route::get('/user-g5-orders/{user_id}', [ControllersAuthController::class, 'get_user_g5_orders']);
+Route::get('/store-test-user', [MembershipController::class, 'add_test_user']);
