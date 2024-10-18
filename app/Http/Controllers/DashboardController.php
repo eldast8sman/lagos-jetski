@@ -24,9 +24,7 @@ class DashboardController extends Controller
 
     public function index(){
         $user = $this->user->logged_in_user();
-        $wallet = $this->wallet->findFirstBy([
-            'user_id' => $user->id
-        ]);
+        $wallet = $this->wallet->fetch_wallet($user);
 
         $announcements = $this->announcement->index();
 

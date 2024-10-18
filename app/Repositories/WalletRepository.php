@@ -2,9 +2,11 @@
 
 namespace App\Repositories;
 
+use App\Models\User;
 use App\Models\Wallet;
 use App\Models\WalletTransaction;
 use App\Repositories\Interfaces\WalletRepositoryInterface;
+use App\Services\SparkleService;
 
 class WalletRepository extends AbstractRepository implements WalletRepositoryInterface
 {
@@ -13,7 +15,7 @@ class WalletRepository extends AbstractRepository implements WalletRepositoryInt
     public function __construct(Wallet $wallet)
     {
         parent::__construct($wallet);
-    }
+    }    
 
     public function userTransactions(int $id, int $limit=10)
     {
@@ -38,5 +40,36 @@ class WalletRepository extends AbstractRepository implements WalletRepositoryInt
         }
         
         return $transaction;
+    }
+
+    public function fetch_wallet(User $user)
+    {
+        if(empty($user->account_number)){
+            $sparkle = new SparkleService();
+            $reference = "SPK_Jetski_".$user->uuid;
+            $payload = [
+                "name" => "{$user->firstname} {$user->lastname}",
+                "external_reference" =>  $reference,
+                "email" => $user->email,
+                "bank_verification_number" => "01234567891",
+                "is_permanent" => 1,
+                "is_active" => 1
+              ];
+
+            $account = $sparkle->createAccount($payload);
+            if($account){
+                $details = $account['data']['account'];
+                $account_number = $details['account_number'];
+                $sparkle_id = $details['id'];
+                $user->update([
+                    'account_number' => $account_number,
+                    'sparkle_id' => $sparkle_id,
+                    'external_sparkle_reference' => $reference
+                ]);
+            }
+        }
+
+        $wallet = $this->findFirstBy(['user_id' => $user->id]);
+        return $wallet;
     }
 }
