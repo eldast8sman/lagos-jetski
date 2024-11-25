@@ -56,14 +56,20 @@ class OrderRepository extends AbstractRepository implements OrderRepositoryInter
     }
 
     public function index($limit=4){
-        $orders = Order::where('user_id', auth('user-api')->user()->id)->where('delivery_status', '!=', 'Delivered')
-            ->orderBy('date_ordered', 'desc')->paginate($limit);
+        $data = [
+            ['user_id', auth('user-api')->user()->id],
+            ['delivery_status', '!=', 'Delivered']
+        ];
+        $orderBy = [
+            ['date_ordered', 'desc']
+        ];
+        $orders = $this->findBy($data, $orderBy, $limit);
         
         if(auth('user-api')->user()->next_order_sync <= date('Y-m-d H:i:s')){
             $this->fetch_g5_order(auth('user-api')->user()->id);
         }
         
-            return $orders;
+        return $orders;
     }
 
     public function past_orders($limit=15){
@@ -199,7 +205,13 @@ class OrderRepository extends AbstractRepository implements OrderRepositoryInter
     }
 
     public function pending_orders($limit=4){
-        $orders = Order::where('delivery_status', '!=', 'Delivered')->orderBy('date_ordered', 'desc')->paginate($limit);
+        $data = [
+            ['delivery_status', '!=', 'Delivered']
+        ];
+        $orderBy = [
+            ['date_ordered', 'desc']
+        ];
+        $orders = $this->findBy($data, $orderBy, $limit);
         return $orders;
     }
 
@@ -226,5 +238,40 @@ class OrderRepository extends AbstractRepository implements OrderRepositoryInter
         }
 
         return $orders;
+    }
+
+    public function summary(){
+        $pending_count = [
+            ['delivery_status', '!=', 'Delivered']
+        ];
+        $dining_count = [
+            ['delivery_status', '!=', 'Delivered'],
+            ['type', 'DiningIn']
+        ];
+        $delivery_count = [
+            ['delivery_status', '!=', 'Delivered'],
+            ['type', 'Delivery']
+        ];
+        $takeaway_count = [
+            ['delivery_status', '!=', 'Delivered'],
+            ['type', 'TakeAway']
+        ];
+        $stuff_count = [
+            ['delivery_status', '!=', 'Delivered'],
+            ['type', 'StuffMeal']
+        ];
+        $drive_count = [
+            ['delivery_status', '!=', 'Delivered'],
+            ['type', 'DriveThru']
+        ];
+
+        return [
+            'total_pendings' => $this->findBy($pending_count, [], null, true),
+            'dining_count' => $this->findBy($dining_count, [], null, true),
+            'delivery_count' => $this->findBy($delivery_count, [], null, true),
+            'takeaway_count' => $this->findBy($takeaway_count, [], null, true),
+            'stuff_count' => $this->findBy($stuff_count, [], null, true),
+            'drive_count' => $this->findBy($drive_count, [], null, true)
+        ];
     }
 }

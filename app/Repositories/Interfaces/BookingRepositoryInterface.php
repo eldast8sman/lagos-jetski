@@ -10,7 +10,7 @@ interface BookingRepositoryInterface extends AbstractRepositoryInterface
 
     public function index($limit=10);
 
-    public function adminIndex($index=10);
+    public function adminIndex($limit=4);
 
     public function pastBookings($limit=10);
 
@@ -21,4 +21,6 @@ interface BookingRepositoryInterface extends AbstractRepositoryInterface
     public function updateBooking(Request $request, string $id);
 
     public function deleteBooking(string $id);
+
+    public function booking_summary();
 }

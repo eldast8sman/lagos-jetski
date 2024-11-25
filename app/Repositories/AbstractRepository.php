@@ -24,20 +24,24 @@ class AbstractRepository implements AbstractRepositoryInterface
         return $model;
     }
 
-    public function all($orderBy=[], $limit=null){
+    public function all($orderBy=[], $limit=null, $count=false){
         if(!empty($orderBy)){
             $models = $this->model;
             foreach($orderBy as $order){
                 $models = $models->orderBy($order[0], $order[1]);
             }
 
-            if(!empty($limit)){
+            if($count == true){
+                return $models->count();
+            } elseif(!empty($limit)){
                 return $models->paginate($limit);
             } else {
                 return $models->get();
             }
         } else {
-            if(!empty($limit)){
+            if($count == true){
+                return $this->model->count();
+            } elseif(!empty($limit)){
                 return $this->model->paginate($limit);
             } else {
                 return $this->model->all();
@@ -54,7 +58,7 @@ class AbstractRepository implements AbstractRepositoryInterface
         }
     }
 
-    public function findBy(array $criteria, $orderBy=[], $limit=null){
+    public function findBy(array $criteria, $orderBy=[], $limit=null, $count=false){
         try {
             if(empty($criteria)){
                 return false;
@@ -67,7 +71,9 @@ class AbstractRepository implements AbstractRepositoryInterface
                 }
             }
     
-            if(isset($limit)){
+            if($count == true){
+                $data = $data->count();
+            } elseif(isset($limit)){
                 $data = $data->paginate($limit);
             } else {
                 $data = $data->get();
@@ -99,7 +105,7 @@ class AbstractRepository implements AbstractRepositoryInterface
         }
     }
 
-    public function findByOr(array $criteria, $orderBy=[], $limit=null)
+    public function findByOr(array $criteria, $orderBy=[], $limit=null, $count=false)
     {
         try {
             if(empty($criteria)){
@@ -118,7 +124,9 @@ class AbstractRepository implements AbstractRepositoryInterface
                     $data = $data->orderBy($order[0], $order[1]);
                 }
             }
-            if(isset($limit)){
+            if($count == true){
+                $data = $data->count();
+            } elseif(isset($limit)){
                 $data = $data->paginate($limit);
             } else {
                 $data = $data->get();
