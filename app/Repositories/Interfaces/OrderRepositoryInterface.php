@@ -17,4 +17,6 @@ interface OrderRepositoryInterface extends AbstractRepositoryInterface
     public function all_past_orders($limit=15);
 
     public function admin_search($limit=15);
+
+    public function summary();
 }

@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\BookingController as AdminBookingController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\MembershipController;
 use App\Http\Controllers\Admin\MenuController;
@@ -38,6 +39,10 @@ Route::prefix('admin')->group(function(){
     Route::get('/notification-images', [NotificationImageController::class, 'index'])->name('notification-images');
 
     Route::middleware('auth:admin-api')->group(function(){
+        Route::controller(AdminDashboardController::class)->group(function(){
+            Route::get('/dashboard', 'index');
+        });
+
         Route::controller(AuthController::class)->group(function(){
             Route::get('/me', 'me')->name('admin.me');
             Route::post('/account-details', 'update_account_details')->name('admin.updateAccountDetails');

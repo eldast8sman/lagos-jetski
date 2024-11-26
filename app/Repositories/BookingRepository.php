@@ -139,4 +139,17 @@ class BookingRepository extends AbstractRepository implements BookingRepositoryI
 
         return true;
     }
+
+    public function booking_summary()
+    {
+        return [
+            'total_bookings' => $this->all([], null, true),
+            'pending_bookings' => $this->findBy([
+                ['date', '>=', Carbon::now()]
+            ], [], null, true),
+            'past_bookings' => $this->findBy([
+                ['date', '<', Carbon::now()]
+            ], [], null, true)
+        ];
+    }
 }

@@ -15,4 +15,6 @@ interface MenuRepositoryInterface extends AbstractRepositoryInterface
     public function fetchByName(Request $request, int $limit=9);
 
     public function getModifiers($id);
+
+    public function membership_summary();
 }

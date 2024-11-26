@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Jobs\StoreMenuJob;
 use App\Models\Product;
+use App\Models\User;
 use App\Repositories\Interfaces\MenuRepositoryInterface;
 use App\Services\G5PosService;
 use Exception;
@@ -109,5 +110,29 @@ class MenuRepository extends AbstractRepository implements MenuRepositoryInterfa
             $this->errors = $e->getMessage();
             return false;
         }
+    }
+
+    public function membership_summary()
+    {
+        $data = [];
+        $products = $this->findBy([
+            'category' => 'Infrastructure'
+        ], [
+            ['name', 'asc']
+        ], null);
+        if(!empty($products)){
+            parent::__construct(new User());
+            foreach($products as $product){
+                $members_count = $this->findBy(['membership_id' => $product->id], [], null, true);
+                $data[] = [
+                    'id' => $product->id,
+                    'uuid' => $product->uuid,
+                    'name' => $product->name,
+                    'photo' => $product->photo,
+                    'membership_count' => $members_count
+                ];
+            }
+        }
+        return $data;
     }
 }
