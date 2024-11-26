@@ -120,7 +120,7 @@ class MenuRepository extends AbstractRepository implements MenuRepositoryInterfa
         ], [
             ['name', 'asc']
         ], null);
-        if(!empty($produts)){
+        if(!empty($products)){
             parent::__construct(new User());
             foreach($products as $product){
                 $members_count = $this->findBy(['membership_id' => $product->id], [], null, true);

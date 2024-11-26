@@ -40,7 +40,7 @@ class SaveAdminNotificationJob implements ShouldQueue
      */
     public function handle(): void
     {
-        if($this->type == 'boking'){
+        if($this->type == 'booking'){
             $model = Booking::find($this->type_id);
             $user = User::find($model->user_id);
 

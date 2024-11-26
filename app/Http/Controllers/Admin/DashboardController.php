@@ -27,7 +27,8 @@ class DashboardController extends Controller
     }
 
     public function index(){
-        $notifications = NotificationResource::collection($this->notification->index(2));
+        $notificateds = $this->notification->index(2);
+        $notifications = !empty($this->notificateds) ? NotificationResource::collection($notificateds) : [];
         $bookings = BookingResource::collection($this->booking->adminIndex(4));
         $orders = $this->order->summary();
         $membership = $this->product->membership_summary();
