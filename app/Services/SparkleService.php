@@ -56,6 +56,7 @@ class SparkleService
         $response = Http::withToken($this->token)->get($url);
         return $this->responseHandler($response);
     }
+    
 
     public function getCustomerAccountwithId(int $id)
     {
