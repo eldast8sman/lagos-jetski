@@ -218,7 +218,7 @@ class OrderRepository extends AbstractRepository implements OrderRepositoryInter
     public function all_past_orders($limit=15){
         $data = ['delivery_status' => 'Delivered'];
         $orderBy = [
-            ['date_ordered' => 'desc']
+            ['date_ordered', 'desc']
         ];
         $orders = $this->findBy($data, $orderBy, $limit);
         return $orders;

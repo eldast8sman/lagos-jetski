@@ -10,9 +10,9 @@ interface AdsRepositoryInterface extends AbstractRepositoryInterface
 
     public function index($limit=10);
 
-    public function show(int $id);
+    public function show(string $id);
 
-    public function edit(int $id, Request $request);
+    public function edit(string $id, Request $request);
 
     public function destroy($id);
 }
