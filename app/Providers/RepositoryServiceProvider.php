@@ -5,11 +5,13 @@ namespace App\Providers;
 use App\Models\Admin;
 use App\Repositories\AbstractRepository;
 use App\Repositories\AdminRepository;
+use App\Repositories\AdsRepository;
 use App\Repositories\AnnouncementRepository;
 use App\Repositories\BookingRepository;
 use App\Repositories\EventRepository;
 use App\Repositories\Interfaces\AbstractRepositoryInterface;
 use App\Repositories\Interfaces\AdminRepositoryInterface;
+use App\Repositories\Interfaces\AdsRepositoryInterface;
 use App\Repositories\Interfaces\AnnouncementRepositoryInterface;
 use App\Repositories\Interfaces\BookingRepositoryInterface;
 use App\Repositories\Interfaces\EventRepositoryInterface;
@@ -56,6 +58,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(AnnouncementRepositoryInterface::class, AnnouncementRepository::class);
         $this->app->bind(WalletRepositoryInterface::class, WalletRepository::class);
         $this->app->bind(NotificationRepositoryInterface::class, NotificationRepository::class);
+        $this->app->bind(AdsRepositoryInterface::class, AdsRepository::class);
     }
 
     /**

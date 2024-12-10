@@ -38,7 +38,7 @@ class OrderController extends Controller
 
     public function search(Request $request){
         $limit = !empty($_GET['limit']) ? (int)$_GET['limit'] : 15;
-        $orders = $this->order->admin_search($limit);
+        $orders = $this->order->admin_search($request->order_no, $limit);
         return $this->success_response("Orders fetched successfully", OrderDetailResource::collection($orders)->response()->getData(true));
     }
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\AdsController;
 use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\BookingController as AdminBookingController;
@@ -95,6 +96,14 @@ Route::prefix('admin')->group(function(){
             Route::post('/', 'store')->name('admin.anouncement.store');
             Route::get('/', 'index')->name('admin.announcement.index');
             Route::get('/{uuid}', 'show')->name('admin.announcement.show');
+        });
+
+        Route::prefix('/ads')->controller(AdsController::class)->group(function(){
+            Route::post('/', 'store')->name('admin.ads.store');
+            Route::get('/', 'index')->name('admin.ads.index');
+            Route::get('/{uuid}', 'show')->name('admin.ads.update');
+            Route::post('/{uuid}', 'update')->name('admin.ads.update');
+            Route::delete('/{uuid}', 'destroy')->name('admin.ads.delete');
         });
     });
 });
