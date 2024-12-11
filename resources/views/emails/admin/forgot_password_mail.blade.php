@@ -23,7 +23,7 @@
                         Hello {{ $name }}
                     </p>
                     <p>
-                        Don't worry, This happens even to the best of us. We have you covered <br /> Click on the link below to generate a new Password</td>
+                        Don't worry, This happens even to the best of us. We have you covered <br /> Use this OTP below to reset your Password</td>
                     </p>
                 </tr>
                 <tr>
@@ -33,7 +33,7 @@
                   <td align="center" valign="top">
                     <table width="250" style="width:250px; background-color:#6bafb2; border-radius:4px;" border="0" cellspacing="0" cellpadding="0" align="center">
                       <tr>
-                        <td class="em_white" height="42" align="center" valign="middle" style="font-family: Arial, sans-serif; font-size: 16px; color:#ffffff; font-weight:bold; height:42px;"><a href="{{ $link }}">Generate Password</a></td>
+                        <td class="em_white" height="42" align="center" valign="middle" style="font-family: Arial, sans-serif; font-size: 16px; color:#ffffff; font-weight:bold; height:42px;"><span>{{ $otp }}</span></td>
                       </tr>
                     </table>
                   </td>

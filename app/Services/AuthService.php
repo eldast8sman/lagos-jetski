@@ -118,8 +118,8 @@ class AuthService
             return false;
         } 
         
-        $user->token = Str::random(20).time();
-        $user->token_expiry = date('Y-m-d H:i:s', time() + (60 * 10));
+        $user->token = rand(111111, 999999);
+        $user->token_expiry = date('Y-m-d H:i:s', time() + (60 * 15));
         $user->save();
 
         Mail::to($user->email)->send(new ForgotPasswordMail($user->firstname, $user->token));
@@ -129,17 +129,17 @@ class AuthService
     public function reset_password(Request $request) : bool
     {
         if($this->guard == 'admin-api'){
-            $user = Admin::where('token', $request->token)->first();
+            $user = Admin::where('token', $request->token)->where('email', $request->email)->first();
         } elseif($this->guard == 'user-api'){
-            $user = User::where('token', $request->token)->first();
+            $user = User::where('token', $request->token)->where('email', $request->email)->first();
         }
         if(empty($user)){
-            $this->errors = "Wrong Link";
+            $this->errors = "Wrong OTP";
             return false;
         }
 
         if($user->token_expiry < date('Y-m-d H:i:s')){
-            $this->errors = "Expired Link";
+            $this->errors = "Expired OTP";
             return false;
         }
         $user->update([
