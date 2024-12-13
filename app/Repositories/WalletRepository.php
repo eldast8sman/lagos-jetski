@@ -51,8 +51,9 @@ class WalletRepository extends AbstractRepository implements WalletRepositoryInt
                 "name" => "{$user->firstname} {$user->lastname}",
                 "external_reference" =>  $reference,
                 "email" => $user->email,
+                "expires_at" => "2027-12-31 23:59:59",
                 "bank_verification_number" => "01234567891",
-                "is_permanent" => 1,
+                "is_permanent" => 0,
                 "is_active" => 1
               ];
 
