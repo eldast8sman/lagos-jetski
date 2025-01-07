@@ -14,7 +14,8 @@ class Advert extends Model
         'type',
         'description',
         'image_banner',
-        'ads_link'
+        'ads_link',
+        'status'
     ];
 
     public function banner(){
