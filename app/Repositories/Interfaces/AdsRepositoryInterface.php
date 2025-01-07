@@ -14,5 +14,7 @@ interface AdsRepositoryInterface extends AbstractRepositoryInterface
 
     public function edit(string $id, Request $request);
 
+    public function change_status(string $id);
+
     public function destroy($id);
 }

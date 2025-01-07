@@ -28,6 +28,7 @@ class AdsRepository extends AbstractRepository implements AdsRepositoryInterface
             }
         }
         $all = $request->except(['image_banner']);
+        $all['status'] = 1;
         if($request->has('image_banner') and !empty($request->image_banner)){
             $photo = FileManagerService::upload_file($request->file('image_banner'), env('FILESYSTEM_DISK'));
             if($photo){
@@ -77,6 +78,18 @@ class AdsRepository extends AbstractRepository implements AdsRepositoryInterface
         if(isset($old_photo)){
             FileManagerService::delete($old_photo);
         }
+
+        return $ad;
+    }
+    
+    public function change_status(string $id)
+    {
+        if(empty($ad = $this->findFirstBy(['uuid' => $id]))){
+            $this->errors = "No Advert was fetched";
+            return false;
+        }
+        $ad->status = ($ad->status == 0) ? 1 : 0;
+        $ad->save();
 
         return $ad;
     }

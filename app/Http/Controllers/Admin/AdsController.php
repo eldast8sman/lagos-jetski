@@ -64,6 +64,14 @@ class AdsController extends Controller
         return $this->success_response("Advert updated successfully", new AdsResource($ad));
     }
 
+    public function change_status($uuid){
+        if(!$ad = $this->ad->change_status($uuid)){
+            $this->failed_response($this->ad->errors, 400);
+        }
+
+        return $this->success_response("Advert status changed successfully", new AdsResource($ad));
+    }
+
     public function destroy($uuid){
         if(!$this->ad->destroy($uuid)){
             return $this->failed_response("Failed to delete");

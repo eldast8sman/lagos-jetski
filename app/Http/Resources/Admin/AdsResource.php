@@ -18,7 +18,8 @@ class AdsResource extends JsonResource
             'uuid' => $this->uuid,
             'description' => $this->description,
             'image_banner' => $this->banner->url,
-            'ads_link' => $this->ads_link
+            'ads_link' => $this->ads_link,
+            'status' => $this->status
         ];
     }
 }
