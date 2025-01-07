@@ -105,6 +105,14 @@ Route::prefix('admin')->group(function(){
             Route::post('/{uuid}', 'update')->name('admin.ads.update');
             Route::delete('/{uuid}', 'destroy')->name('admin.ads.delete');
         });
+
+        Route::prefix('/popup-ads')->controller(AdsController::class)->group(function(){
+            Route::post('/', 'store_popup')->name('admin.popupAds.store');
+            Route::get('/', 'popup_index')->name('admin.popupAds.index');
+            Route::get('/{uuid}', 'show')->name('admin.popupAds.update');
+            Route::post('/{uuid}', 'update')->name('admin.popupAds.update');
+            Route::delete('/{uuid}', 'destroy')->name('admin.popupAds.delete');
+        });
     });
 });
 
