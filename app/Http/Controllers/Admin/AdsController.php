@@ -25,11 +25,26 @@ class AdsController extends Controller
         return $this->success_response('Advert added successfully', new AdsResource($ad));
     }
 
+    public function store_popup(StoreAdRequest $request){
+        if(!$ad = $this->ad->store($request, "popup")){
+            return $this->failed_response($this->ad->errors, 400);
+        }
+
+        return $this->success_response('Advert added successfully', new AdsResource($ad));
+    }
+
     public function index(){
         $limit = !empty($_GET['limit']) ?$_GET['limit'] : 10;
 
         $ads = $this->ad->index($limit);
-        return $this->success_response("Aderts fetched successfuly", AdsResource::collection($ads)->response()->getData(true));
+        return $this->success_response("Adverts fetched successfuly", AdsResource::collection($ads)->response()->getData(true));
+    }
+
+    public function popup_index(){
+        $limit = !empty($_GET['limit']) ?$_GET['limit'] : 10;
+
+        $ads = $this->ad->index($limit, "popup");
+        return $this->success_response("Adverts fetched successfuly", AdsResource::collection($ads)->response()->getData(true));
     }
 
     public function show($uuid){

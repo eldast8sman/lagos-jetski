@@ -11,6 +11,7 @@ class Advert extends Model
 
     protected $fillable = [
         'uuid',
+        'type',
         'description',
         'image_banner',
         'ads_link'

@@ -6,9 +6,9 @@ use Illuminate\Http\Request;
 
 interface AdsRepositoryInterface extends AbstractRepositoryInterface
 {
-    public function store(Request $request);
+    public function store(Request $request, $type="regular");
 
-    public function index($limit=10);
+    public function index($limit=10, $type="regular");
 
     public function show(string $id);
 
