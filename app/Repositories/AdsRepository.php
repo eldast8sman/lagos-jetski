@@ -18,8 +18,15 @@ class AdsRepository extends AbstractRepository implements AdsRepositoryInterface
         parent::__construct($advert);
     }   
 
-    public function store(Request $request)
+    public function store(Request $request, $type="regular")
     {
+        if($type == "popup"){
+            $count = $this->findBy(['type' => 'popup'], [], null, true);
+            if($count >= 2){
+                $this->errors = "You can only have 2 popup Ads at a time";
+                return false;
+            }
+        }
         $all = $request->except(['image_banner']);
         if($request->has('image_banner') and !empty($request->image_banner)){
             $photo = FileManagerService::upload_file($request->file('image_banner'), env('FILESYSTEM_DISK'));
@@ -28,15 +35,16 @@ class AdsRepository extends AbstractRepository implements AdsRepositoryInterface
             }
         }
         $all['uuid'] = Str::uuid().'-'.time();
+        $all['type'] = $type;
         if(!$ad = $this->create($all)){
             $this->errors = "Advert Upload Failed";
         }
         return $ad;
     }
 
-    public function index($limit = 10)
+    public function index($limit = 10, $type="regular")
     {
-        $ads = $this->all([], $limit);
+        $ads = $this->findBy(['type' => $type], [], $limit);
         return $ads;
     }
 
