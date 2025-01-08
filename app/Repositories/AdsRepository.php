@@ -49,6 +49,12 @@ class AdsRepository extends AbstractRepository implements AdsRepositoryInterface
         return $ads;
     }
 
+    public function user_index($type = "regular")
+    {
+        $ads = $this->findBy(['type' => $type, 'status' => 1], []);
+        return $ads;
+    }
+
     public function show(string $id)
     {
         $ad = $this->findFirstBy(['uuid' => $id]);
