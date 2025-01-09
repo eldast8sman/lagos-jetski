@@ -10,6 +10,8 @@ interface MemberRepositoryInterface extends AbstractRepositoryInterface
 
     public function store(array $data, $balance=null);
 
+    public function index($limit);
+
     public function all_members($limit=null);
 
     public function resend_activation_link(User $user);

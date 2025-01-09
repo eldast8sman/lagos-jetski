@@ -19,8 +19,11 @@ class MemberRepository extends AbstractRepository implements MemberRepositoryInt
 {
     public $errors = "";
 
+    public $user;
+
     public function __construct(User $user){
         parent::__construct($user);
+        $this->user = $user;
     }
 
     public function fetch_g5_customers()
@@ -105,6 +108,15 @@ class MemberRepository extends AbstractRepository implements MemberRepositoryInt
 
         return $user;
     }
+
+    public function index($limit)
+    {
+        $users = $this->user->whereParent()->orderBy('firstname', 'asc')
+                ->orderBy('lastname', 'asc')->orderBy('created_at', 'asc')
+                ->paginate($limit);
+
+        return $users;
+    }    
 
     public function all_members($limit=null)
     {

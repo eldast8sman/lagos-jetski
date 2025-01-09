@@ -75,13 +75,25 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
+    public function scopeParent($query){
+        return $query->whereNull('parent_id')->orWhereEmpty('parent_id');
+    }
+
     public function membership(){
         return $this->belongsTo(Product::class, 'membership_id', 'id');
     }
 
     public function membership_information(){
+        return $this->hasOne(UserMembership::class);
+    }
+
+    public function watercraft(){
         return $this->hasOne(MembershipInformation::class);
     }
+
+    public function employment_detail(){
+        return $this->hasOne(EmploymentDetail::class);
+    }  
 
     public function wallet(){
         return $this->hasOne(Wallet::class);
