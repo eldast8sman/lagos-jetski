@@ -145,4 +145,16 @@ class MemberRepository extends AbstractRepository implements MemberRepositoryInt
 
         return true;
     }
+
+    public function update_user(User $user, $data)
+    {
+        $user->update($data);
+        return $user;
+    }
+
+    public function fetch_member_by_param($key, $value)
+    {
+        $user = $this->findFirstBy([$key => $value]);
+        return $user;
+    }
 }
