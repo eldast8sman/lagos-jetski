@@ -85,6 +85,20 @@ class MemberRepository extends AbstractRepository implements MemberRepositoryInt
         }
     }
 
+    public function keep(array $data){
+        $user = $this->findByOrFirst([
+            ['email' => $data['email']],
+            ['phone' => $data['phone']]
+        ]);
+        if(empty($user)){
+            $user = $this->store($data, 0);
+        } else {
+            $user = $this->update_user($user, $data);
+        }
+
+        return $user;
+    }
+
     public function store(array $data, $balance=null)
     {
         $data['uuid'] = Str::uuid().'-'.time();
@@ -146,7 +160,7 @@ class MemberRepository extends AbstractRepository implements MemberRepositoryInt
         return true;
     }
 
-    public function update_user(User $user, $data)
+    public function update_user(User $user, array $data)
     {
         $user->update($data);
         return $user;

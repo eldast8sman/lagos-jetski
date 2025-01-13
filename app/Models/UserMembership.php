@@ -21,6 +21,8 @@ class UserMembership extends Model
         'active_diver',
         'padi_level',
         'padi_number',
+        'company',
+        'department',
         'referee1',
         'referee2',
         'referee3',

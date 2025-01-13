@@ -27,6 +27,7 @@ class User extends Authenticatable implements JWTSubject
         'marital_status',
         'address',
         'nationality',
+        'religion',
         'membership_id',
         'exp_date',
         'email_verified',
@@ -77,8 +78,8 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
-    public function scopeParent($query){
-        return $query->whereNull('parent_id')->orWhereEmpty('parent_id');
+    public function scopeWhereParent($query){
+        return $query->whereNull('parent_id')->orWhere('parent_id', 0)->orWhere('parent_id', '');
     }
 
     public function membership(){
