@@ -41,6 +41,7 @@ class SaveMembershipJob implements ShouldQueue
             }
         }
         $data = [
+            'g5_id' => $row['id_number'],
             'firstname' => $row['first_name'],
             'lastname' => $row['last_name'],
             'phone' => $row['mobile_number'],

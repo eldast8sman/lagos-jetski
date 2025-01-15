@@ -90,6 +90,10 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasOne(UserMembership::class);
     }
 
+    public function relations(){
+        return $this->where('parent_id', $this->id)->get(['uuid', 'relationship', 'firstname', 'lastname', 'phone', 'email', 'dob', 'gender', 'marital_status', 'address', 'photo']);
+    }
+
     public function watercraft(){
         return $this->hasOne(MembershipInformation::class);
     }

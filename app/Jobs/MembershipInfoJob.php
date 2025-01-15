@@ -35,7 +35,7 @@ class MembershipInfoJob implements ShouldQueue
     {
         $data = [
             'membership_id' => $this->user->membership_id,
-            'amount' => str_replace(['$', ','], ['', ''], $this->row['membership_rate']),
+            'amount' => !empty($this->row['membership_rate']) ? str_replace(['$', ','], ['', ''], $this->row['membership_rate']) : 0,
             'payment_date' => Carbon::createFromFormat('Y-m-d', '1900-01-01')->addDays($this->row['payment_date'] - 2)->toDateString(),
             'date_joined' => Carbon::createFromFormat('Y-m-d', '1900-01-01')->addDays($this->row['member_joining_date'] - 2)->toDateString(),
             'expiry_date' => Carbon::createFromFormat('Y-m-d', '1900-01-01')->addDays($this->row['expiry'] - 2)->toDateString(),

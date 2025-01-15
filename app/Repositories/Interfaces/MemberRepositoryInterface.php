@@ -17,4 +17,6 @@ interface MemberRepositoryInterface extends AbstractRepositoryInterface
     public function resend_activation_link(User $user);
 
     public function update_user(User $user, array $data);
+
+    public function fetch_member_by_param($key, $value);
 }

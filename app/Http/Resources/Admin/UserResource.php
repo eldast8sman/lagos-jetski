@@ -28,14 +28,14 @@ class UserResource extends JsonResource
             'gender' => $this->gender,
             'marital_status' => $this->marital_status,
             'address' => $this->address,
-            'membership' => $this->membership()->first(['id', 'name']),
+            'membership' => $this->membership()->first(['uuid', 'name']),
             'photo' => $this->photo,
             'account_number' => $this->account_number,
             'wallet' => $this->wallet()->first(['uuid', 'balance']),
-            'relations' => empty($this->parent_id) ? (!empty(User::where('parent_id', $this->id)->get()) ? RelationResource::collection(User::where('parent_id', $this->id)) : []) : null,
-            'membership_information' => $this->membership_information,
+            'relations' => empty($this->parent_id) ? (!empty(User::where('parent_id', $this->id)->get()) ? RelationResource::collection(User::where('parent_id', $this->id)->get()) : []) : null,
+            'membership_information' => new MembershipInformationResource($this->membership_information),
             'watercraft' => $this->watercraft,
-            'employment_details' => $this->employment_details
+            'employment_details' => $this->employment_detail
         ];
     }
 }

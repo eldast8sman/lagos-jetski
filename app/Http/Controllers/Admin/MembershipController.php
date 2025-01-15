@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ExcelUploadRequest;
-use App\Http\Resources\UserResource;
+use App\Http\Resources\Admin\AllUserResource;
+use App\Http\Resources\Admin\UserResource;
 use App\Imports\MembershipImport;
 use App\Models\User;
 use App\Repositories\Interfaces\MemberRepositoryInterface;
@@ -27,7 +28,7 @@ class MembershipController extends Controller
         $limit = $request->has('limit') ? $request->limit : 20;
         $users = $this->user->index($limit);
 
-        return $this->success_response("Members fetched successfully", UserResource::collection($users)->response()->getData(true));
+        return $this->success_response("Members fetched successfully", AllUserResource::collection($users)->response()->getData(true));
     }
 
     public function store_g5_members(){
@@ -57,7 +58,15 @@ class MembershipController extends Controller
         }
     }
 
-    public function add_test_user(){
+    public function show($uuid){
+        if(empty($user = $this->user->fetch_member_by_param('uuid', $uuid))){
+            return $this->failed_response('No Member was fetched', 404);
+        }
+
+        return $this->success_response('Member fetched successfully', new UserResource($user));
+    }
+
+    public function add_test_user($uuid){
         $data = $this->test_data();
         $store = $this->user->store($data, 0);
 
