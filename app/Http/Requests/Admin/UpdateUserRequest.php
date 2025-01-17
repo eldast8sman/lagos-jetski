@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class ProfileUpdateRequest extends FormRequest
+class UpdateUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,7 +24,7 @@ class ProfileUpdateRequest extends FormRequest
         return [
             'firstname' => 'required|string',
             'lastname' => 'required|string',
-            'username' => 'required|string|'.Rule::unique('users', 'username')->ignore(auth('user-api')->user()->id, 'id'),
+            'username' => 'string|nullable',
             'phone' => 'required|string',
             'dob' => 'required|date',
             'gender' => 'string|in:Male,Female|nullable',

@@ -8,8 +8,10 @@ use App\Models\Product;
 use App\Models\User;
 use App\Models\Wallet;
 use App\Repositories\Interfaces\MemberRepositoryInterface;
+use App\Services\FileManagerService;
 use App\Services\G5PosService;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -163,6 +165,46 @@ class MemberRepository extends AbstractRepository implements MemberRepositoryInt
     public function update_user(User $user, array $data)
     {
         $user->update($data);
+        return $user;
+    }
+
+    public function update_member(Request $request, User $user){
+        $data = $request->except(['photo']);
+        if(isset($request->photo) and !empty($request->photo)){
+            $photo = FileManagerService::upload_file($request->file('photo', env('FILESYSTEM_DISK')));
+            if(!$photo){
+                $this->errors = "Photo upload failed";
+                return false;
+            }
+            $data['photo'] = $photo->url;
+            if(!empty($user->photo)){
+                $old_photo = $user->photo;
+            }
+        }
+
+        $user->update($data);
+        if(isset($old_photo)){
+            if($old_photo = FileManagerService::findByUrl($old_photo)){
+                FileManagerService::delete($old_photo->id);
+            }
+        }
+
+        return $user;
+    }
+
+    public function store_user(Request $request)
+    {
+        $data = $request->except(['photo']);
+        if(isset($request->photo) and !empty($request->photo)){
+            $photo = FileManagerService::upload_file($request->file('photo', env('FILESYSTEM_DISK')));
+            if(!$photo){
+                $this->errors = "Photo upload failed";
+                return false;
+            }
+            $data['photo'] = $photo->url;
+        }
+
+        $user = $this->store($data, 0);
         return $user;
     }
 

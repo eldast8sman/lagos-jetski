@@ -22,7 +22,7 @@ return new class extends Migration
             $table->date('date_joined')->nullable();
             $table->date('expiry_date')->nullable();
             $table->text('membership_notes')->nullable();
-            $table->string('active_diver')->default(false);
+            $table->string('active_diver')->default('No');
             $table->string('padi_level')->nullable();
             $table->string('padi_number')->nullable();
             $table->string('company')->nullable();
