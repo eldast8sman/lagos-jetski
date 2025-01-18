@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('adverts', function (Blueprint $table) {
-            $table->boolean('status')->default(true)->after('ads_link');
+            $table->string('status')->default('active')->after('ads_link');
         });
     }
 
