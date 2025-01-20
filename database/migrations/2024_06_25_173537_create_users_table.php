@@ -32,7 +32,7 @@ return new class extends Migration
             $table->string('token')->nullable();
             $table->dateTime('token_expiry')->nullable();
             $table->string('photo');
-            $table->integer('g5_id')->nullable()->unique();
+            $table->string('g5_id')->nullable()->unique();
             $table->string('sparkle_id')->nullable();
             $table->string('external_sparkle_reference')->unique()->nullable();
             $table->string('account_number')->unique()->nullable();

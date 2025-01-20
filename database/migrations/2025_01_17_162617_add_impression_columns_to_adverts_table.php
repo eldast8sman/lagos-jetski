@@ -17,7 +17,7 @@ return new class extends Migration
             $table->date('campaign_end')->nullable()->after('campaign_start');
             $table->integer('clicks')->default(0)->after('status');
             $table->integer('impressions')->default(0)->after('clicks');
-            $table->integer('conversions')->default(0)->after('conversions');
+            $table->integer('conversions')->default(0)->after('impressions');
         });
     }
 
@@ -27,7 +27,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('adverts', function (Blueprint $table) {
-            $table->dropColumn('campaign)name');
+            $table->dropColumn('campaign_name');
             $table->dropColumn('campaign_start');
             $table->dropColumn('campaign_end');
             $table->dropColumn('clicks');

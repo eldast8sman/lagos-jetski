@@ -112,7 +112,7 @@ class MemberRepository extends AbstractRepository implements MemberRepositoryInt
             return false;
         }
 
-        if($balance !== null){
+        if(($balance !== null) and empty($user->parent_id)){
             Wallet::create([
                 'uuid' => Str::uuid().'-'.time(),
                 'user_id' => $user->id,
@@ -169,6 +169,27 @@ class MemberRepository extends AbstractRepository implements MemberRepositoryInt
     }
 
     public function update_member(Request $request, User $user){
+        if(isset($request->email) and !empty($request->email)){
+            $em_found = $this->findFirstBy([
+                ['email', '=', $request->email],
+                ['id', '!=', $user->id]
+            ]);
+            if(!empty($em_found)){
+                $this->errors = $em_found;
+                return false;
+            }
+        }
+
+        if(isset($request->phone) and !empty($request->phone)){
+            $em_found = $this->findFirstBy([
+                ['phone', '=', $request->phone],
+                ['id', '!=', $user->id]
+            ]);
+            if(!empty($em_found)){
+                $this->errors = "Duplicate Phone Number";
+                return false;
+            }
+        }
         $data = $request->except(['photo']);
         if(isset($request->photo) and !empty($request->photo)){
             $photo = FileManagerService::upload_file($request->file('photo', env('FILESYSTEM_DISK')));

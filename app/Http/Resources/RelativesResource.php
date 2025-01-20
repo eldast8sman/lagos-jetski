@@ -15,11 +15,16 @@ class RelativesResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
+            'uuid' => $this->uuid,
             'firstname' => $this->firstname,
             'lastname' => $this->lastname,
             'relationship' => ucfirst($this->relationship),
-            'photo' => $this->photo
+            'photo' => $this->photo,
+            'gender' => ucfirst($this->gender),
+            'marital_status' => ucfirst($this->marital_status),
+            'dob' => $this->dob,
+            'address' => $this->address,
+            'status' => $this->status
         ];
     }
 }

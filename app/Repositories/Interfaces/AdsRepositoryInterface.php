@@ -18,5 +18,7 @@ interface AdsRepositoryInterface extends AbstractRepositoryInterface
 
     public function user_index();
 
+    public function click_increment(string $uuid);
+
     public function destroy($id);
 }

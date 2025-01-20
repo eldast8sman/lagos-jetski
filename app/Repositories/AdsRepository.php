@@ -33,6 +33,15 @@ class AdsRepository extends AbstractRepository implements AdsRepositoryInterface
         if(!$ad = $this->create($all)){
             $this->errors = "Advert Upload Failed";
         }
+        $today = Carbon::now()->format('Y-m-d');
+        if($ad->campaign_start > $today){
+            $ad->status = 'draft';
+        } else if($ad->campaign_end < $today){
+            $ad->status = 'completed';
+        } else {
+            $ad->status = 'active';
+        }
+        $ad->save();
         return $ad;
     }
 
@@ -41,7 +50,8 @@ class AdsRepository extends AbstractRepository implements AdsRepositoryInterface
         $order = [
             ['created_at', 'desc']
         ];
-        $ads = $this->all([], $limit);
+        $ads = $this->all($order, $limit);
+        return $ads;
     }
 
     public function user_index()
@@ -99,6 +109,17 @@ class AdsRepository extends AbstractRepository implements AdsRepositoryInterface
         $ad->save();
 
         return $ad;
+    }
+
+    public function click_increment(string $uuid)
+    {
+        if(empty($ad = $this->findFirstBy(['uuid' => $uuid]))){
+            return false;
+        }
+        $ad->clicks += 1;
+        $ad->save();
+
+        return true;
     }
 
     public function destroy($id)

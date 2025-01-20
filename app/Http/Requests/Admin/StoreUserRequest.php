@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreRelativeRequest extends FormRequest
+class StoreUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,18 +22,16 @@ class StoreRelativeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'relationship' => 'required|string',
             'firstname' => 'required|string',
             'lastname' => 'required|string',
-            'email' => 'required|string|email|unique:users,email',
+            'username' => 'string|nullable',
             'phone' => 'required|string',
             'dob' => 'required|date',
-            'gender' => 'required|string',
-            'marital_status' => 'required|string',
-            'address' => 'required|string',
-            'photo' => 'required|file|mimes:jpg,jpeg,png',
-            'notifications' => 'required|boolean',
-            'can_use' => 'required|boolean'
+            'gender' => 'string|in:Male,Female|nullable',
+            'marital_status' => 'string|in:Single,Married|nullable',
+            'address' => 'string',
+            'photo' => 'file|mimes:jpg,jpeg,png,svg,webp,gif|max:2048|unique:users,phone',
+            'g5_id' => 'required|string'
         ];
     }
 }

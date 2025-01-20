@@ -35,7 +35,8 @@ class UserResource extends JsonResource
             'relations' => empty($this->parent_id) ? (!empty(User::where('parent_id', $this->id)->get()) ? RelationResource::collection(User::where('parent_id', $this->id)->get()) : []) : null,
             'membership_information' => new MembershipInformationResource($this->membership_information),
             'watercraft' => $this->watercraft,
-            'employment_details' => $this->employment_detail
+            'employment_details' => $this->employment_detail,
+            'status' => $this->status
         ];
     }
 }

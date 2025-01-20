@@ -65,6 +65,7 @@ Route::prefix('admin')->group(function(){
             Route::post('/bulk', 'store_bulk')->name('admin.members.store.bulk');
             Route::get('/{user}/verification-resend', 'resend_activation_link')->name('admin.members.verificationLinkResend');
             Route::get('/{uuid}', 'show')->name('admin.members.show');
+            Route::post('/{uuid}/activation', 'user_activation')->name('admin.members.activation');
             Route::post('/{uuid}/profile', 'update')->name('admin.members.update');
             Route::post('/{uuid}/membership', 'update_membership_information')->name('admin.members.membership.update');
             Route::post('/{uuid}/watercraft', 'update_watercraft_information')->name('admin.members.watercraft.update');

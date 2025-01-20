@@ -9,6 +9,7 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\ProfilePhotoRequest;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Http\Requests\ResetPasswordRequest;
+use App\Http\Resources\LoginResource;
 use App\Http\Resources\ProfileResource;
 use App\Http\Resources\v1\Users\Account\AccountResource;
 use App\Mail\Admin\ForgotPasswordMail;
@@ -57,7 +58,7 @@ class AuthController extends Controller
         }
         $user = $this->user->findByEmail($request->email);
         $user->authorization = $token;
-        return $this->success_response("Login successful", $user);
+        return $this->success_response("Login successful", new LoginResource($user));
     }
 
     public function refresh_token(){

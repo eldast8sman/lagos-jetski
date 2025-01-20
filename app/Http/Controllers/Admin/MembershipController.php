@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ExcelUploadRequest;
+use App\Http\Requests\Admin\StoreUserRequest;
 use App\Http\Requests\Admin\UpdateEmploymentInformationRequest;
 use App\Http\Requests\Admin\UpdateMembershipInformationRequest;
 use App\Http\Requests\Admin\UpdateUserRequest;
 use App\Http\Requests\Admin\UpdateWatercraftInformationRequest;
+use App\Http\Requests\Admin\UserActivationRequest;
 use App\Http\Resources\Admin\AllUserResource;
 use App\Http\Resources\Admin\UserResource;
 use App\Imports\MembershipImport;
@@ -82,7 +84,7 @@ class MembershipController extends Controller
     }
 
     public function show($uuid){
-        if(empty($user = $this->find_uuid('uuid', $uuid))){
+        if(empty($user = $this->find_uuid($uuid))){
             return $this->failed_response('No Member was fetched', 404);
         }
 
@@ -157,12 +159,25 @@ class MembershipController extends Controller
         return $this->success_response("User Profile updated successfull", new UserResource($updated));
     }
 
-    public function store(UpdateUserRequest $request){
+    public function store(StoreUserRequest $request){
         if(!$user = $this->user->store_user($request)){
             return $this->failed_response("User upload failed", 500);
         }
 
         return $this->success_response("User successfully added", new UserResource($user));
+    }
+
+    public function user_activation(UserActivationRequest $request, $uuid){
+        $user = $this->find_uuid($uuid);
+        if(empty($user)){
+            return $this->failed_response('No User was fetched', 404);   
+        } 
+        
+        if(!$updated = $this->user->update_member($request, $user)){
+            return $this->failed_response($this->user->errors, 400);
+        }
+
+        return $this->success_response("Operation successful");
     }
 
     public function add_test_user($uuid){

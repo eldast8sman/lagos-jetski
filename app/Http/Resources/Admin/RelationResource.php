@@ -25,7 +25,8 @@ class RelationResource extends JsonResource
             'dob' => $this->dob,
             'gender' => $this->gender,
             'marital_status' => $this->marital_status,
-            'address' => $this->address
+            'address' => $this->address,
+            'status' => $this->status
         ];
     }
 }
