@@ -12,7 +12,7 @@
         "laravel/tinker": "^2.9",
         "maatwebsite/excel": "*",
         "phpoffice/phpspreadsheet": "*",
-        "spatie/laravel-sluggable": "^3.6",
+        "spatie/laravel-sluggable": "^3.7",
         "tymon/jwt-auth": "^2.1"
     },
     "require-dev": {

@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\BookingController as AdminBookingController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\MembershipController;
+use App\Http\Controllers\Admin\MenuCategoryController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\AuthController as ControllersAuthController;
@@ -70,6 +71,14 @@ Route::prefix('admin')->group(function(){
             Route::post('/{uuid}/membership', 'update_membership_information')->name('admin.members.membership.update');
             Route::post('/{uuid}/watercraft', 'update_watercraft_information')->name('admin.members.watercraft.update');
             Route::post('/{uuid}/employment', 'update_employment_information')->name('admin.members.employment.update');
+        });
+
+        Route::controller(MenuCategoryController::class)->prefix('menu-categories')->group(function(){
+            Route::get('/', 'index')->name('admin.menuCategory.index');
+            Route::post('/', 'store')->name('admin.menuCategory.store');
+            Route::get('/{uuid}', 'show')->name('admin.menuCategory.show');
+            Route::put('/{uuid}', 'update')->name('admin.menuCategory.update');
+            Route::delete('/{uuid}', 'destroy')->name('admin.menuCategory.delete');
         });
 
         Route::prefix('orders')->group(function(){

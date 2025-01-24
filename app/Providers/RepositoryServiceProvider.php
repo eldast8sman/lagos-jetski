@@ -20,6 +20,7 @@ use App\Repositories\Interfaces\EventRepositoryInterface;
 use App\Repositories\Interfaces\InviteRepositoryInterface;
 use App\Repositories\Interfaces\MemberRepositoryInterface;
 use App\Repositories\Interfaces\MembershipInformationRepositoryInterface;
+use App\Repositories\Interfaces\MenuCategoryRepositoryInterface;
 use App\Repositories\Interfaces\MenuRepositoryInterface;
 use App\Repositories\Interfaces\NotificationRepositoryInterface;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
@@ -31,6 +32,7 @@ use App\Repositories\Interfaces\WalletRepositoryInterface;
 use App\Repositories\InviteRepository;
 use App\Repositories\MemberRepository;
 use App\Repositories\MembershipInformationRepository;
+use App\Repositories\MenuCategoryRepository;
 use App\Repositories\MenuRepository;
 use App\Repositories\NotificationRepository;
 use App\Repositories\OrderRepository;
@@ -68,6 +70,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(MembershipInformationRepositoryInterface::class, MembershipInformationRepository::class);
         $this->app->bind(EmploymentDetailRepositoryInterface::class, EmploymentDetailRepository::class);
         $this->app->bind(UserWatercraftRepositoryInterface::class, UserWatercraftRepository::class);
+        $this->app->bind(MenuCategoryRepositoryInterface::class, MenuCategoryRepository::class);
     }
 
     /**

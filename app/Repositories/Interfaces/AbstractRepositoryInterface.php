@@ -8,6 +8,8 @@ interface AbstractRepositoryInterface
 
     public function find(int $id);
 
+    public function findByUuid($uuid);
+
     public function findBy(array $array);
 
     public function findFirstBy(array $array);
