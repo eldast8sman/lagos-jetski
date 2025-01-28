@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->string('slug');
             $table->string('uuid');
-            $table->foreignIdFor(MenuCategory::class, 'menu_category_id');
+            $table->foreignIdFor(MenuCategory::class, 'menu_category_id')->nullable();
             $table->string('name');
             $table->text('description')->nullable();
             $table->double('amount')->nullable();
@@ -29,6 +29,10 @@ return new class extends Migration
             $table->integer('total_orders')->default(0);
             $table->integer('parent_id')->nullable();
             $table->integer('modifier_id')->nullable();
+            $table->boolean('is_stand_alone')->default(true);
+            $table->boolean('is_add_on')->default(false);
+            $table->text('add_ons')->nullable();
+            $table->boolean('is_new')->default(true);
             $table->timestamps();
         });
     }

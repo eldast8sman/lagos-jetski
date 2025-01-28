@@ -10,6 +10,7 @@ use App\Repositories\AnnouncementRepository;
 use App\Repositories\BookingRepository;
 use App\Repositories\EmploymentDetailRepository;
 use App\Repositories\EventRepository;
+use App\Repositories\FoodMenuRepository;
 use App\Repositories\Interfaces\AbstractRepositoryInterface;
 use App\Repositories\Interfaces\AdminRepositoryInterface;
 use App\Repositories\Interfaces\AdsRepositoryInterface;
@@ -17,6 +18,7 @@ use App\Repositories\Interfaces\AnnouncementRepositoryInterface;
 use App\Repositories\Interfaces\BookingRepositoryInterface;
 use App\Repositories\Interfaces\EmploymentDetailRepositoryInterface;
 use App\Repositories\Interfaces\EventRepositoryInterface;
+use App\Repositories\Interfaces\FoodMenuRepositoryInterface;
 use App\Repositories\Interfaces\InviteRepositoryInterface;
 use App\Repositories\Interfaces\MemberRepositoryInterface;
 use App\Repositories\Interfaces\MembershipInformationRepositoryInterface;
@@ -71,6 +73,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(EmploymentDetailRepositoryInterface::class, EmploymentDetailRepository::class);
         $this->app->bind(UserWatercraftRepositoryInterface::class, UserWatercraftRepository::class);
         $this->app->bind(MenuCategoryRepositoryInterface::class, MenuCategoryRepository::class);
+        $this->app->bind(FoodMenuRepositoryInterface::class, FoodMenuRepository::class);
     }
 
     /**

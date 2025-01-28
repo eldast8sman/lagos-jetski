@@ -6,6 +6,7 @@ use App\Models\MenuCategory;
 use App\Repositories\Interfaces\MenuCategoryRepositoryInterface;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class MenuCategoryRepository extends AbstractRepository implements MenuCategoryRepositoryInterface
 {
@@ -19,6 +20,7 @@ class MenuCategoryRepository extends AbstractRepository implements MenuCategoryR
     public function store(Request $request){
         try {
             $all = $request->all();
+            $all['uuid'] = Str::uuid().'-'.time();
 
             $category = $this->create($all);
 

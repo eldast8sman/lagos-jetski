@@ -42,7 +42,7 @@ class MenuCategoryController extends Controller
             return $this->failed_response('Update Failed', 500);
         }
 
-        return $this->success_response('Category Updated successfully');
+        return $this->success_response('Category Updated successfully', new MenuCategoryResource($category));
     }
 
     public function destroy($uuid){

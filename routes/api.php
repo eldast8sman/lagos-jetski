@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\BookingController as AdminBookingController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\EventController;
+use App\Http\Controllers\Admin\FoodMenuController;
 use App\Http\Controllers\Admin\MembershipController;
 use App\Http\Controllers\Admin\MenuCategoryController;
 use App\Http\Controllers\Admin\MenuController;
@@ -79,6 +80,17 @@ Route::prefix('admin')->group(function(){
             Route::get('/{uuid}', 'show')->name('admin.menuCategory.show');
             Route::put('/{uuid}', 'update')->name('admin.menuCategory.update');
             Route::delete('/{uuid}', 'destroy')->name('admin.menuCategory.delete');
+        });
+
+        Route::controller(FoodMenuController::class)->prefix('food-menu')->group(function(){
+            Route::post('/', 'refresh_menu')->name('foodMenu.refresh');
+            Route::get('/', 'index')->name('foodMenu.index');
+            Route::get('/menu/new', 'new_menu')->name('foodMenu.newMenu');
+            Route::get('/menu/add-ons', 'add_ons')->name('foodMenu.addOns.index');
+            Route::get('/{uuid}', 'show')->name('foodMenu.show');
+            Route::post('/{uuid}', 'update')->name('foodMenu.update')->name('foodMenu.update');
+            Route::get('/{uuid}/availability', 'availability')->name('foodMenu.availability');
+            Route::delete('delete-photo/{uuid}', 'delete_photo');
         });
 
         Route::prefix('orders')->group(function(){
