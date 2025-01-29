@@ -28,7 +28,7 @@ class ObserverServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Admin::observe(AdminObserver::class);
-        User::observe(UserObsever::class);
+        // User::observe(UserObsever::class);
         Booking::observe(BookingObserver::class);
         Order::observe(OrderObserver::class);
     }

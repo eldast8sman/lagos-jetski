@@ -10,6 +10,7 @@ use App\Http\Requests\Admin\ForgotPasswordRequest;
 use App\Http\Requests\Admin\LoginRequest;
 use App\Http\Requests\Admin\ResetPasswordRequest;
 use App\Http\Requests\Admin\UpdateProfileRequest;
+use App\Http\Resources\Admin\LoginResource;
 use App\Models\Admin;
 use App\Repositories\Interfaces\AdminRepositoryInterface;
 use App\Services\AuthService;
@@ -81,7 +82,7 @@ class AuthController extends Controller
         }
         $admin = $this->admin->findByEmail($request->email);
         $admin->authorization = $token;
-        return $this->success_response("LogIn successful", $admin);
+        return $this->success_response("LogIn successful", new LoginResource($admin));
     }
 
     public function refresh_token(){

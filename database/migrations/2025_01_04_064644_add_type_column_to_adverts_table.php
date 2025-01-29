@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('adverts', function (Blueprint $table) {
-            $table->string('type')->default('regular')->after('uuid');
+            $table->string('type')->default('primary')->after('uuid');
         });
     }
 

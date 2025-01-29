@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Admin\UserActivationRequest;
 use App\Http\Requests\StoreRelativeRequest;
 use App\Http\Requests\UpdateRelativeRequest;
 use App\Http\Resources\RelativeResource;
@@ -31,7 +32,7 @@ class RelativeController extends Controller
             return $this->failed_response($this->relative->errors, "409");
         }
 
-        return $this->success_response("Relative added successfully", new RelativeResource($relative));
+        return $this->success_response("Relative added successfully", new RelativesResource($relative));
     }
 
     public function show($id){
@@ -39,7 +40,7 @@ class RelativeController extends Controller
             return $this->failed_response($this->relative->errors, "404");
         }
 
-        return $this->success_response("Relative fetched successfully", new RelativeResource($relative));
+        return $this->success_response("Relative fetched successfully", new RelativesResource($relative));
     }
 
     public function update(UpdateRelativeRequest $request, $id){
@@ -47,7 +48,15 @@ class RelativeController extends Controller
             return $this->failed_response($this->relative->errors, "409");
         }
 
-        return $this->success_response("Relative Updated successfully", new RelativeResource($relative));
+        return $this->success_response("Relative Updated successfully", new RelativesResource($relative));
+    }
+
+    public function activation(UserActivationRequest $request, $uuid){
+        if(!$this->relative->user_activation($request, $uuid)){
+            return $this->failed_response($this->relative->errors, 404);
+        }
+
+        return $this->success_response("Operation successful");
     }
 
     public function destroy($id){

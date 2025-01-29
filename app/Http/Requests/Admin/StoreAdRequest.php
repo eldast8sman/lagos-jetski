@@ -22,9 +22,13 @@ class StoreAdRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'description' => 'required|string',
+            'campaign_name' => 'string|required',
+            'description' => 'string|nullable',
+            'type' => 'required|string|in:Primary,Secondary',
             'ads_link' => 'required|string',
-            'image_banner' => 'required|file|mimes:png,jpg,jpeg,gif'
+            'image_banner' => 'required|file|mimes:png,jpg,jpeg,gif',
+            'campaign_start' => 'date|nullable',
+            'campaign_end' => 'date|nullable'
         ];
     }
 }

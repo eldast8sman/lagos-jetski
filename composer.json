@@ -10,7 +10,10 @@
         "laravel/framework": "^11.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
-        "spatie/laravel-sluggable": "^3.6",
+        "league/flysystem-aws-s3-v3": "^3.29",
+        "maatwebsite/excel": "*",
+        "phpoffice/phpspreadsheet": "*",
+        "spatie/laravel-sluggable": "^3.7",
         "tymon/jwt-auth": "^2.1"
     },
     "require-dev": {

@@ -21,13 +21,13 @@ return new class extends Migration
             $table->string('model')->nullable();
             $table->string('hin_number')->unique()->nullable();
             $table->string('year')->nullable();
-            $table->integer('loa')->nullable();
-            $table->integer('beam')->nullable();
-            $table->integer('draft')->nullable();
-            $table->integer('nwa')->unique()->nullable();
+            $table->string('loa')->nullable();
+            $table->string('beam')->nullable();
+            $table->string('draft')->nullable();
+            $table->string('nwa')->unique()->nullable();
             $table->string('nwa_expiry')->nullable();
-            $table->integer('mmsi')->unique()->nullable();
-            $table->integer('call_sign')->nullable();
+            $table->string('mmsi')->unique()->nullable();
+            $table->string('call_sign')->nullable();
             $table->timestamps();
         });
     }

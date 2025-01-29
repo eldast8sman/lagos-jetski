@@ -12,7 +12,9 @@ interface UserRelativeRepositoryInterface extends AbstractRepositoryInterface
 
     public function getRelative($id);
 
-    public function updateRelative(Request $request, int $id);
+    public function updateRelative(Request $request, string $id);
 
-    public function deleteRelative(int $id);
+    public function user_activation(Request $request, $uuid);
+
+    public function deleteRelative(string $id);
 }

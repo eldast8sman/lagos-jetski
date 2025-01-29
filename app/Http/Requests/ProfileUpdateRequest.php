@@ -28,8 +28,8 @@ class ProfileUpdateRequest extends FormRequest
             'username' => 'required|string|'.Rule::unique('users', 'username')->ignore(auth('user-api')->user()->id, 'id'),
             'phone' => 'required|string',
             'dob' => 'required|date',
-            'gender' => 'string',
-            'marital_status' => 'string',
+            'gender' => 'string|in:Male,Female|nullable',
+            'marital_status' => 'string|in:Single,Married|nullable',
             'address' => 'string'
         ];
     }

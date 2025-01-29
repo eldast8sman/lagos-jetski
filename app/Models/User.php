@@ -21,10 +21,13 @@ class User extends Authenticatable implements JWTSubject
         'email',
         'other_emails',
         'password',
+        'private_phone',
         'dob',
         'gender',
         'marital_status',
         'address',
+        'nationality',
+        'religion',
         'membership_id',
         'exp_date',
         'email_verified',
@@ -75,13 +78,29 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
+    public function scopeWhereParent($query){
+        return $query->whereNull('parent_id')->orWhere('parent_id', 0)->orWhere('parent_id', '');
+    }
+
     public function membership(){
         return $this->belongsTo(Product::class, 'membership_id', 'id');
     }
 
     public function membership_information(){
+        return $this->hasOne(UserMembership::class);
+    }
+
+    public function relations(){
+        return $this->where('parent_id', $this->id)->get(['uuid', 'relationship', 'firstname', 'lastname', 'phone', 'email', 'dob', 'gender', 'marital_status', 'address', 'photo']);
+    }
+
+    public function watercraft(){
         return $this->hasOne(MembershipInformation::class);
     }
+
+    public function employment_detail(){
+        return $this->hasOne(EmploymentDetail::class);
+    }  
 
     public function wallet(){
         return $this->hasOne(Wallet::class);

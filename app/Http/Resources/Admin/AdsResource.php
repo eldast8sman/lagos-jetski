@@ -16,9 +16,16 @@ class AdsResource extends JsonResource
     {
         return [
             'uuid' => $this->uuid,
+            'campaign_name' => $this->campaign_name,
+            'type' => $this->type,
             'description' => $this->description,
             'image_banner' => $this->banner->url,
+            'campaign_start' => $this->campaign_start,
+            'campaign_end' => $this->campaign_end,
             'ads_link' => $this->ads_link,
+            'clicks' => $this->clicks,
+            'impressions' => $this->impressions,
+            'conversions' => $this->conversions,
             'status' => $this->status
         ];
     }

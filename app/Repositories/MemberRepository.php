@@ -8,8 +8,10 @@ use App\Models\Product;
 use App\Models\User;
 use App\Models\Wallet;
 use App\Repositories\Interfaces\MemberRepositoryInterface;
+use App\Services\FileManagerService;
 use App\Services\G5PosService;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -19,8 +21,11 @@ class MemberRepository extends AbstractRepository implements MemberRepositoryInt
 {
     public $errors = "";
 
+    public $user;
+
     public function __construct(User $user){
         parent::__construct($user);
+        $this->user = $user;
     }
 
     public function fetch_g5_customers()
@@ -82,6 +87,20 @@ class MemberRepository extends AbstractRepository implements MemberRepositoryInt
         }
     }
 
+    public function keep(array $data){
+        $user = $this->findByOrFirst([
+            ['email' => $data['email']],
+            ['phone' => $data['phone']]
+        ]);
+        if(empty($user)){
+            $user = $this->store($data, 0);
+        } else {
+            $user = $this->update_user($user, $data);
+        }
+
+        return $user;
+    }
+
     public function store(array $data, $balance=null)
     {
         $data['uuid'] = Str::uuid().'-'.time();
@@ -93,7 +112,7 @@ class MemberRepository extends AbstractRepository implements MemberRepositoryInt
             return false;
         }
 
-        if($balance !== null){
+        if(($balance !== null) and empty($user->parent_id)){
             Wallet::create([
                 'uuid' => Str::uuid().'-'.time(),
                 'user_id' => $user->id,
@@ -105,6 +124,15 @@ class MemberRepository extends AbstractRepository implements MemberRepositoryInt
 
         return $user;
     }
+
+    public function index($limit)
+    {
+        $users = $this->user->whereParent()->orderBy('firstname', 'asc')
+                ->orderBy('lastname', 'asc')->orderBy('created_at', 'asc')
+                ->paginate($limit);
+
+        return $users;
+    }    
 
     public function all_members($limit=null)
     {
@@ -132,5 +160,89 @@ class MemberRepository extends AbstractRepository implements MemberRepositoryInt
         Mail::to($user)->send(new AddUserNotificationMail($user->name, $user->verification_token, $user->email));
 
         return true;
+    }
+
+    public function update_user(User $user, array $data)
+    {
+        $user->update($data);
+        return $user;
+    }
+
+    public function update_member(Request $request, User $user){
+        if(isset($request->email) and !empty($request->email)){
+            $em_found = $this->findFirstBy([
+                ['email', '=', $request->email],
+                ['id', '!=', $user->id]
+            ]);
+            if(!empty($em_found)){
+                $this->errors = $em_found;
+                return false;
+            }
+        }
+
+        if(isset($request->phone) and !empty($request->phone)){
+            $em_found = $this->findFirstBy([
+                ['phone', '=', $request->phone],
+                ['id', '!=', $user->id]
+            ]);
+            if(!empty($em_found)){
+                $this->errors = "Duplicate Phone Number";
+                return false;
+            }
+        }
+        $data = $request->except(['photo']);
+        if(isset($request->photo) and !empty($request->photo)){
+            $photo = FileManagerService::upload_file($request->file('photo', env('FILESYSTEM_DISK')));
+            if(!$photo){
+                $this->errors = "Photo upload failed";
+                return false;
+            }
+            $data['photo'] = $photo->url;
+            if(!empty($user->photo)){
+                $old_photo = $user->photo;
+            }
+        }
+
+        $user->update($data);
+        if(isset($old_photo)){
+            if($old_photo = FileManagerService::findByUrl($old_photo)){
+                FileManagerService::delete($old_photo->id);
+            }
+        }
+
+        return $user;
+    }
+
+    public function store_user(Request $request)
+    {
+        $data = $request->except(['photo']);
+        if(isset($request->photo) and !empty($request->photo)){
+            $photo = FileManagerService::upload_file($request->file('photo', env('FILESYSTEM_DISK')));
+            if(!$photo){
+                $this->errors = "Photo upload failed";
+                return false;
+            }
+            $data['photo'] = $photo->url;
+        }
+
+        $user = $this->store($data, 0);
+        return $user;
+    }
+
+    public function user_activation(Request $request, $uuid){
+        $user = $this->findByUuid($uuid);
+        if(empty($user)){
+            $this->errors = "No User was fetched";
+            return false;
+        }
+
+        $user->can_use = $request->status;
+        $user->save();
+    }
+
+    public function fetch_member_by_param($key, $value)
+    {
+        $user = $this->findFirstBy([$key => $value]);
+        return $user;
     }
 }

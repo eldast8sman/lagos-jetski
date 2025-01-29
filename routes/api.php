@@ -7,13 +7,17 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\BookingController as AdminBookingController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\EventController;
+use App\Http\Controllers\Admin\FoodMenuController;
 use App\Http\Controllers\Admin\MembershipController;
+use App\Http\Controllers\Admin\MenuCategoryController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\AdsController as ControllersAdsController;
 use App\Http\Controllers\AuthController as ControllersAuthController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventController as ControllersEventController;
+use App\Http\Controllers\FoodMenuController as ControllersFoodMenuController;
 use App\Http\Controllers\MembershipController as ControllersMembershipController;
 use App\Http\Controllers\MenuController as ControllersMenuController;
 use App\Http\Controllers\NotificationImageController;
@@ -61,7 +65,34 @@ Route::prefix('admin')->group(function(){
 
         Route::controller(MembershipController::class)->prefix('members')->group(function(){
             Route::get('/', 'index')->name('admin.members.index');
+            Route::post('/', 'store')->name('admin.members.store');
+            Route::post('/bulk', 'store_bulk')->name('admin.members.store.bulk');
             Route::get('/{user}/verification-resend', 'resend_activation_link')->name('admin.members.verificationLinkResend');
+            Route::get('/{uuid}', 'show')->name('admin.members.show');
+            Route::post('/{uuid}/activation', 'user_activation')->name('admin.members.activation');
+            Route::post('/{uuid}/profile', 'update')->name('admin.members.update');
+            Route::post('/{uuid}/membership', 'update_membership_information')->name('admin.members.membership.update');
+            Route::post('/{uuid}/watercraft', 'update_watercraft_information')->name('admin.members.watercraft.update');
+            Route::post('/{uuid}/employment', 'update_employment_information')->name('admin.members.employment.update');
+        });
+
+        Route::controller(MenuCategoryController::class)->prefix('menu-categories')->group(function(){
+            Route::get('/', 'index')->name('admin.menuCategory.index');
+            Route::post('/', 'store')->name('admin.menuCategory.store');
+            Route::get('/{uuid}', 'show')->name('admin.menuCategory.show');
+            Route::put('/{uuid}', 'update')->name('admin.menuCategory.update');
+            Route::delete('/{uuid}', 'destroy')->name('admin.menuCategory.delete');
+        });
+
+        Route::controller(FoodMenuController::class)->prefix('food-menu')->group(function(){
+            Route::post('/', 'refresh_menu')->name('foodMenu.refresh');
+            Route::get('/', 'index')->name('foodMenu.index');
+            Route::get('/menu/new', 'new_menu')->name('foodMenu.newMenu');
+            Route::get('/menu/add-ons', 'add_ons')->name('foodMenu.addOns.index');
+            Route::get('/{uuid}', 'show')->name('foodMenu.show');
+            Route::post('/{uuid}', 'update')->name('foodMenu.update')->name('foodMenu.update');
+            Route::get('/{uuid}/availability', 'availability')->name('foodMenu.availability');
+            Route::delete('delete-photo/{uuid}', 'delete_photo');
         });
 
         Route::prefix('orders')->group(function(){
@@ -146,6 +177,7 @@ Route::prefix('user')->group(function(){
                 Route::get('/', 'index')->name('user.relative.index');
                 Route::get('/{id}', 'show')->name('user.relative.show');
                 Route::post('/{id}', 'update')->name('user.relative.update');
+                Route::put('/{uuid}/activation', 'activation')->name('user.relative.activation');
                 Route::delete('/{id}', 'destroy')->name('user.relative.delete');
             });
 
@@ -154,6 +186,12 @@ Route::prefix('user')->group(function(){
                 Route::get('/', 'index')->name('user.membershipInformation');
                 Route::put('/', 'update')->name('user.membershipInformation.update');
             });
+        });
+
+        Route::controller(ControllersFoodMenuController::class)->prefix('food-menu')->group(function(){
+            Route::get('/categories/all', 'categories')->name('foodMenu.categories.all');
+            Route::get('/', 'index')->name('foodMenu.index');
+            Route::get('/{slug}', 'show')->name('foodMenu.show');
         });
 
         Route::prefix('orders')->group(function(){
@@ -185,6 +223,11 @@ Route::prefix('user')->group(function(){
         Route::prefix('payments')->controller(PaymentController::class)->group(function(){
             Route::get('/', 'index')->name('user.payments.index');
             Route::get('/{uuid}', 'show')->name('user.payment.show');
+        });
+
+        Route::controller(ControllersAdsController::class)->prefix('ads')->group(function(){
+            Route::get('/', 'index')->name('user.ads.index');
+            Route::get('/{uuid}/click-increment', 'click_increment')->name('user.ads.click');
         });
 
         Route::get('/', [DashboardController::class, 'index'])->name('userDashboard');

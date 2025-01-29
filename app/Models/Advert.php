@@ -11,11 +11,17 @@ class Advert extends Model
 
     protected $fillable = [
         'uuid',
+        'campaign_name',
         'type',
         'description',
         'image_banner',
+        'campaign_start',
+        'campaign_end',
         'ads_link',
-        'status'
+        'status',
+        'clicks',
+        'impressions',
+        'conversions'
     ];
 
     public function banner(){

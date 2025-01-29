@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\Advert;
 use App\Repositories\Interfaces\AdsRepositoryInterface;
 use App\Services\FileManagerService;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -18,15 +19,8 @@ class AdsRepository extends AbstractRepository implements AdsRepositoryInterface
         parent::__construct($advert);
     }   
 
-    public function store(Request $request, $type="regular")
+    public function store(Request $request)
     {
-        if($type == "popup"){
-            $count = $this->findBy(['type' => 'popup'], [], null, true);
-            if($count >= 2){
-                $this->errors = "You can only have 2 popup Ads at a time";
-                return false;
-            }
-        }
         $all = $request->except(['image_banner']);
         $all['status'] = 1;
         if($request->has('image_banner') and !empty($request->image_banner)){
@@ -36,22 +30,40 @@ class AdsRepository extends AbstractRepository implements AdsRepositoryInterface
             }
         }
         $all['uuid'] = Str::uuid().'-'.time();
-        $all['type'] = $type;
         if(!$ad = $this->create($all)){
             $this->errors = "Advert Upload Failed";
         }
+        $today = Carbon::now()->format('Y-m-d');
+        if($ad->campaign_start > $today){
+            $ad->status = 'draft';
+        } else if($ad->campaign_end < $today){
+            $ad->status = 'completed';
+        } else {
+            $ad->status = 'active';
+        }
+        $ad->save();
         return $ad;
     }
 
-    public function index($limit = 10, $type="regular")
+    public function index($limit = 10)
     {
-        $ads = $this->findBy(['type' => $type], [], $limit);
+        $order = [
+            ['created_at', 'desc']
+        ];
+        $ads = $this->all($order, $limit);
         return $ads;
     }
 
-    public function user_index($type = "regular")
+    public function user_index()
     {
-        $ads = $this->findBy(['type' => $type, 'status' => 1], []);
+        $today = Carbon::now()->format('Y-m-d');
+        $criteria = [
+            ['campaign_start', '<=', $today],
+            ['campaign_end', '>=', $today],
+            ['status', '=', 'active']
+        ];
+
+        $ads = $this->findBy($criteria);
         return $ads;
     }
 
@@ -88,16 +100,27 @@ class AdsRepository extends AbstractRepository implements AdsRepositoryInterface
         return $ad;
     }
     
-    public function change_status(string $id)
+    public function change_status(string $id, $status='pause')
     {
         if(empty($ad = $this->findFirstBy(['uuid' => $id]))){
             $this->errors = "No Advert was fetched";
             return false;
         }
-        $ad->status = ($ad->status == 0) ? 1 : 0;
+        $ad->status = $status;
         $ad->save();
 
         return $ad;
+    }
+
+    public function click_increment(string $uuid)
+    {
+        if(empty($ad = $this->findFirstBy(['uuid' => $uuid]))){
+            return false;
+        }
+        $ad->clicks += 1;
+        $ad->save();
+
+        return true;
     }
 
     public function destroy($id)

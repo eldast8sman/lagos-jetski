@@ -58,6 +58,16 @@ class AbstractRepository implements AbstractRepositoryInterface
         }
     }
 
+    public function findByUuid($uuid)
+    {
+        try {
+            $data = $this->model->where('uuid', $uuid)->first();
+            return $data;
+        } catch(Exception $e){
+            return false;
+        }
+    }
+
     public function findBy(array $criteria, $orderBy=[], $limit=null, $count=false){
         try {
             if(empty($criteria)){

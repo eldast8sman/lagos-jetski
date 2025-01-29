@@ -40,26 +40,11 @@ class UserRelativeRepository extends AbstractRepository implements UserRelativeR
                 $all['photo'] = $photo->url;
             }
         }
-        $verification_token = Str::random(20).time();
-        $all['uuid'] = Str::uuid().'-'.time();
-        $all['verification_token'] = $verification_token;
-        $all['verification_token_expiry'] = date('Y-m-d H:i:s', time() + (60 * 60 * 24));
         $all['parent_id'] = auth('user-api')->user()->id;
         $all['g5_id'] = auth('user-api')->user()->g5_id;
 
-        $user = $this->create($all);
-        if(!$user){
-            $this->errors = $this->error_msg;
-            return false;
-        }
-
-        Wallet::create([
-            'uuid' => Str::uuid().'-'.time(),
-            'user_id' => $user->id,
-            'balance' => 0
-        ]);
-
-        UserRegistered::dispatch($user);
+        $repo = new MemberRepository(new User());
+        $user = $repo->store($all);
 
         return $user;
     }
@@ -70,7 +55,7 @@ class UserRelativeRepository extends AbstractRepository implements UserRelativeR
             return false;
         }
 
-        $data = ['parent_id' => auth()->user()->id];
+        $data = ['parent_id' => auth('user-api')->user()->id];
         $relatives = $this->findBy($data);
 
         return $relatives;
@@ -82,7 +67,7 @@ class UserRelativeRepository extends AbstractRepository implements UserRelativeR
             return false;
         }
 
-        $data = ['parent_id' => auth('user-api')->user()->id, 'id' => $id];
+        $data = ['parent_id' => auth('user-api')->user()->id, 'uuid' => $id];
         $relative = $this->findFirstBy($data);
         if(empty($relative)){
             $this->errors = "No Relative was fetched";
@@ -92,13 +77,13 @@ class UserRelativeRepository extends AbstractRepository implements UserRelativeR
         return $relative;
     }
 
-    public function updateRelative(Request $request, int $id)
+    public function updateRelative(Request $request, string $id)
     {
         if(!$this->check()){
             return false;
         }
 
-        $data = ['parent_id' => auth('user-api')->user()->id, 'id' => $id];
+        $data = ['parent_id' => auth('user-api')->user()->id, 'uuid' => $id];
         $old_rel = $this->findFirstBy($data);
         if(empty($old_rel)){
             $this->errors = "No Relative was fetched";
@@ -123,12 +108,25 @@ class UserRelativeRepository extends AbstractRepository implements UserRelativeR
         return $relative;
     }
 
-    public function deleteRelative(int $id)
+    public function user_activation(Request $request, $uuid)
+    {
+        $user = $this->findFirstBy(['parent_id' => auth('user-api')->user()->id, 'uuid' => $uuid]);
+        if(empty($user)){
+            $this->errors = "No Relative was fetched";
+            return false;
+        }
+
+        $user->can_use = $request->status;
+        $user->save();
+        return $user;
+    }
+
+    public function deleteRelative(string $id)
     {
         if(!$this->check()){
             return false;
         }
-        $data = ['parent_id' => auth('user-api')->user()->id, 'id' => $id];
+        $data = ['parent_id' => auth('user-api')->user()->id, 'uuid' => $id];
         $relative = $this->findFirstBy($data);
         if(empty($relative)){
             $this->errors = "No Relative was found";

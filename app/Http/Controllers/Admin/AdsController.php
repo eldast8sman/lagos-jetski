@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreAdRequest;
+use App\Http\Requests\Admin\UpdateAdsRequest;
+use App\Http\Requests\Admin\UpdateAdStatusRequest;
 use App\Http\Resources\Admin\AdsResource;
 use App\Repositories\Interfaces\AdsRepositoryInterface;
 use Illuminate\Http\Request;
@@ -25,25 +27,10 @@ class AdsController extends Controller
         return $this->success_response('Advert added successfully', new AdsResource($ad));
     }
 
-    public function store_popup(StoreAdRequest $request){
-        if(!$ad = $this->ad->store($request, "popup")){
-            return $this->failed_response($this->ad->errors, 400);
-        }
-
-        return $this->success_response('Advert added successfully', new AdsResource($ad));
-    }
-
     public function index(){
         $limit = !empty($_GET['limit']) ?$_GET['limit'] : 10;
 
         $ads = $this->ad->index($limit);
-        return $this->success_response("Adverts fetched successfuly", AdsResource::collection($ads)->response()->getData(true));
-    }
-
-    public function popup_index(){
-        $limit = !empty($_GET['limit']) ?$_GET['limit'] : 10;
-
-        $ads = $this->ad->index($limit, "popup");
         return $this->success_response("Adverts fetched successfuly", AdsResource::collection($ads)->response()->getData(true));
     }
 
@@ -56,7 +43,7 @@ class AdsController extends Controller
     }
     
 
-    public function update(StoreAdRequest $request, $uuid){
+    public function update(UpdateAdsRequest $request, $uuid){
         if(!$ad = $this->ad->edit($uuid, $request)){
             $this->failed_response($this->ad->errors, 400);
         }
@@ -64,8 +51,8 @@ class AdsController extends Controller
         return $this->success_response("Advert updated successfully", new AdsResource($ad));
     }
 
-    public function change_status($uuid){
-        if(!$ad = $this->ad->change_status($uuid)){
+    public function change_status(UpdateAdStatusRequest $request, $uuid){
+        if(!$ad = $this->ad->change_status($uuid, $request->status)){
             $this->failed_response($this->ad->errors, 400);
         }
 

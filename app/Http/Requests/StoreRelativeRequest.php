@@ -25,7 +25,6 @@ class StoreRelativeRequest extends FormRequest
             'relationship' => 'required|string',
             'firstname' => 'required|string',
             'lastname' => 'required|string',
-            'username' => 'required|string|unique:users,username',
             'email' => 'required|string|email|unique:users,email',
             'phone' => 'required|string',
             'dob' => 'required|date',
