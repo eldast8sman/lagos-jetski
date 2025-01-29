@@ -27,6 +27,7 @@ class AuthService
     public function attempt($data) : array|bool
     {
         if(!$token = auth($this->guard)->attempt($data)){
+            $this->errors = "Wrong Credentials";
             return false;
         }
 
@@ -34,6 +35,10 @@ class AuthService
             $user = Admin::where('email', $data['email'])->first();
         } elseif($this->guard == 'user-api') {
             $user = User::where('email', $data['email'])->first();
+        }
+        if(($this->guard == 'user-api') and ($user->can_use != 1)){
+            $this->errors = "Your account is disabled. Please contact your sponsor or Admin";
+            return false;
         }
         $user->prev_login = $user->last_login;
         $user->last_login = date('Y-m-d H:i:s');

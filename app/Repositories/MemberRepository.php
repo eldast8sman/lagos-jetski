@@ -229,6 +229,17 @@ class MemberRepository extends AbstractRepository implements MemberRepositoryInt
         return $user;
     }
 
+    public function user_activation(Request $request, $uuid){
+        $user = $this->findByUuid($uuid);
+        if(empty($user)){
+            $this->errors = "No User was fetched";
+            return false;
+        }
+
+        $user->can_use = $request->status;
+        $user->save();
+    }
+
     public function fetch_member_by_param($key, $value)
     {
         $user = $this->findFirstBy([$key => $value]);

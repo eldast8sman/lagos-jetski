@@ -48,9 +48,12 @@ class FoodMenuController extends Controller
 
     public function index(Request $request){
         $limit = $request->has('limit') ? (int)$request->limit : 9;
-        $category_id = $request->has('category') ? ($category = $this->category->findByUuid((string)$request->category) ? $category->id : null) : null;
+        $category_id = $request->has('category') ? (string)$request->category : null;
         $search = $request->has('search') ? (string)$request->search: "";
         $menus = $this->menu->index($limit, $category_id, $search);
+        if(!$menus){
+            return $this->failed_response($this->menu->errors);
+        }
         return $this->success_response('Food Menu fetched successfully', AllFoodMenuResource::collection($menus)->response()->getData(true));
     }
 

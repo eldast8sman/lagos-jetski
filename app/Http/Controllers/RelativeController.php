@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Admin\UserActivationRequest;
 use App\Http\Requests\StoreRelativeRequest;
 use App\Http\Requests\UpdateRelativeRequest;
+use App\Http\Resources\RelativeResource;
 use App\Http\Resources\RelativesResource;
 use App\Repositories\Interfaces\UserRelativeRepositoryInterface;
 use Illuminate\Http\Request;
@@ -47,6 +49,14 @@ class RelativeController extends Controller
         }
 
         return $this->success_response("Relative Updated successfully", new RelativesResource($relative));
+    }
+
+    public function activation(UserActivationRequest $request, $uuid){
+        if(!$this->relative->user_activation($request, $uuid)){
+            return $this->failed_response($this->relative->errors, 404);
+        }
+
+        return $this->success_response("Operation successful");
     }
 
     public function destroy($id){

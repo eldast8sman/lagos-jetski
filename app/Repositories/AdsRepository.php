@@ -63,7 +63,8 @@ class AdsRepository extends AbstractRepository implements AdsRepositoryInterface
             ['status', '=', 'active']
         ];
 
-        $$ads = $this->findBy($criteria);
+        $ads = $this->findBy($criteria);
+        return $ads;
     }
 
     public function show(string $id)

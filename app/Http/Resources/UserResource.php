@@ -15,8 +15,6 @@ class UserResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-            'uuid' => $this->uuid,
             'firstname' => $this->firstname,
             'lastname' => $this->lastname,
             'email' => $this->lastname,
@@ -27,7 +25,7 @@ class UserResource extends JsonResource
             'marital_status' => $this->marital_status,
             'account_number' => $this->account_number,
             'wallet' => $this->wallet()->first(['uuid', 'balance']),
-            'membership' => $this->membership->name,
+            'membership' => $this->membership ? $this->membership->name : null,
             'membership_information' => $this->membership_information,
             'employment_details' => $this->employment_detail,
             'watercraft' => $this->watercraft,

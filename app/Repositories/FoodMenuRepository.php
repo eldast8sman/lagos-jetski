@@ -7,6 +7,7 @@ use App\Models\FoodMenuPhoto;
 use App\Models\MenuCategory;
 use App\Repositories\Interfaces\FoodMenuRepositoryInterface;
 use App\Services\FileManagerService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -25,7 +26,10 @@ class FoodMenuRepository extends AbstractRepository implements FoodMenuRepositor
             ['is_stand_alone', '=', 1]
         ];
         if(!empty($category_id)){
-            $criteria[] = ['menu_category_id', '=', $category_id];
+            $category = MenuCategory::where('uuid', $category_id)->first();
+            if(!empty($category)){
+                $criteria[] = ['menu_category_id', '=', $category->id];
+            }
         };
         if(!empty($search)){
             $criteria[] = ['name', 'like', '%'.$search.'%'];
@@ -35,6 +39,22 @@ class FoodMenuRepository extends AbstractRepository implements FoodMenuRepositor
         ];
         $menus = $this->findBy($criteria, $orderBy, $limit);
         return $menus;
+    }
+
+    public function user_index($limit = 10, $category_id = null, $search = "")
+    {
+        $menu = FoodMenu::isValid();
+        if(!empty($category_id)){
+            $category = MenuCategory::where('uuid', $category_id)->first();
+            if(!empty($category)){
+                $menu = $menu->where('menu_category_id', $category->id);
+            }
+        }
+        if(!empty($search)){
+            $menu = $menu->where('name', 'like', '%'.$search.'%');
+        }
+
+        return $menu->paginate($limit);
     }
 
     public function new_menu($limit=10, $search="")

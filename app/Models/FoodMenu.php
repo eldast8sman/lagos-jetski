@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
@@ -18,6 +19,7 @@ class FoodMenu extends Model
         'description',
         'amount',
         'availability',
+        'availability_time',
         'g5_id',
         'shelf_life_from',
         'shelf_life_to',
@@ -62,5 +64,9 @@ class FoodMenu extends Model
 
     public function category(){
         return $this->belongsTo(MenuCategory::class, 'menu_category_id', 'id');
+    }
+
+    public function scopeIsValid($query){
+        $today = Carbon::today('Africa/Lagos');
     }
 }

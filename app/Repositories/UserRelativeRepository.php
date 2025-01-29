@@ -108,6 +108,19 @@ class UserRelativeRepository extends AbstractRepository implements UserRelativeR
         return $relative;
     }
 
+    public function user_activation(Request $request, $uuid)
+    {
+        $user = $this->findFirstBy(['parent_id' => auth('user-api')->user()->id, 'uuid' => $uuid]);
+        if(empty($user)){
+            $this->errors = "No Relative was fetched";
+            return false;
+        }
+
+        $user->can_use = $request->status;
+        $user->save();
+        return $user;
+    }
+
     public function deleteRelative(string $id)
     {
         if(!$this->check()){

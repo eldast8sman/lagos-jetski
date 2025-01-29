@@ -23,5 +23,7 @@ interface MemberRepositoryInterface extends AbstractRepositoryInterface
 
     public function update_member(Request $request, User $user);
 
+    public function user_activation(Request $request, $uuid);
+
     public function fetch_member_by_param($key, $value);
 }

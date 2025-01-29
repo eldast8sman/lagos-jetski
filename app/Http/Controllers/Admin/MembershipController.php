@@ -168,13 +168,8 @@ class MembershipController extends Controller
     }
 
     public function user_activation(UserActivationRequest $request, $uuid){
-        $user = $this->find_uuid($uuid);
-        if(empty($user)){
-            return $this->failed_response('No User was fetched', 404);   
-        } 
-        
-        if(!$updated = $this->user->update_member($request, $user)){
-            return $this->failed_response($this->user->errors, 400);
+        if(!$this->user->user_activation($request, $uuid)){
+            return $this->failed_response($this->user->errors, 404);
         }
 
         return $this->success_response("Operation successful");

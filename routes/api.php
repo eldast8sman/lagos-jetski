@@ -12,10 +12,12 @@ use App\Http\Controllers\Admin\MembershipController;
 use App\Http\Controllers\Admin\MenuCategoryController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\AdsController as ControllersAdsController;
 use App\Http\Controllers\AuthController as ControllersAuthController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventController as ControllersEventController;
+use App\Http\Controllers\FoodMenuController as ControllersFoodMenuController;
 use App\Http\Controllers\MembershipController as ControllersMembershipController;
 use App\Http\Controllers\MenuController as ControllersMenuController;
 use App\Http\Controllers\NotificationImageController;
@@ -175,6 +177,7 @@ Route::prefix('user')->group(function(){
                 Route::get('/', 'index')->name('user.relative.index');
                 Route::get('/{id}', 'show')->name('user.relative.show');
                 Route::post('/{id}', 'update')->name('user.relative.update');
+                Route::put('/{uuid}/activation', 'activation')->name('user.relative.activation');
                 Route::delete('/{id}', 'destroy')->name('user.relative.delete');
             });
 
@@ -183,6 +186,12 @@ Route::prefix('user')->group(function(){
                 Route::get('/', 'index')->name('user.membershipInformation');
                 Route::put('/', 'update')->name('user.membershipInformation.update');
             });
+        });
+
+        Route::controller(ControllersFoodMenuController::class)->prefix('food-menu')->group(function(){
+            Route::get('/categories/all', 'categories')->name('foodMenu.categories.all');
+            Route::get('/', 'index')->name('foodMenu.index');
+            Route::get('/{slug}', 'show')->name('foodMenu.show');
         });
 
         Route::prefix('orders')->group(function(){
@@ -214,6 +223,11 @@ Route::prefix('user')->group(function(){
         Route::prefix('payments')->controller(PaymentController::class)->group(function(){
             Route::get('/', 'index')->name('user.payments.index');
             Route::get('/{uuid}', 'show')->name('user.payment.show');
+        });
+
+        Route::controller(ControllersAdsController::class)->prefix('ads')->group(function(){
+            Route::get('/', 'index')->name('user.ads.index');
+            Route::get('/{uuid}/click-increment', 'click_increment')->name('user.ads.click');
         });
 
         Route::get('/', [DashboardController::class, 'index'])->name('userDashboard');

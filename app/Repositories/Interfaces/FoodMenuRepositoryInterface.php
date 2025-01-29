@@ -8,6 +8,8 @@ interface FoodMenuRepositoryInterface extends AbstractRepositoryInterface
 {
     public function index($limit=10, $category_id=null, $search="");
 
+    public function user_index($limit=10, $category_id=null, $search="");
+
     public function new_menu($limit=10, $search="");
 
     public function show(string $identifier);

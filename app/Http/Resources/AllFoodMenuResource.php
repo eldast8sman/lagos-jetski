@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class AdsResource extends JsonResource
+class AllFoodMenuResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,12 +15,11 @@ class AdsResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'uuid' => $this->uuid,
-            'campaign_name' => $this->campaign_name,
-            'type' => $this->type,
+            'slug' => $this->slug,
+            'name' => $this->name,
             'description' => $this->description,
-            'image_banner' => $this->banner->url,
-            'ads_link' => $this->ads_link
+            'amount' => $this->amount,
+            'photo' => ($this->photos()->count() > 0) ? $this->photos()->first()->file_manager->url : null
         ];
     }
 }
